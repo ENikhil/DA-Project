@@ -7,13 +7,13 @@ use GUN_STORE;
 
 create table STORE (
 	StoreNo INT NOT NULL AUTO_INCREMENT,
-	Location char(50) NOT NULL,
-	PRIMARY KEY (StoreNo)
+	_Location char(50) NOT NULL,
+	constraint StoreKey primary key (StoreNo)
 ) engine=InnoDB default charset=latin1;
 
-insert into STORE (Location) values ('Hyderabad');
-insert into STORE (Location) values ('Bangalore');
-insert into STORE (Location) values ('Chennai');
+insert into STORE (_Location) values ('Hyderabad');
+insert into STORE (_Location) values ('Bangalore');
+insert into STORE (_Location) values ('Chennai');
 
 
 create table EMPLOYEE (
@@ -27,9 +27,9 @@ create table EMPLOYEE (
 	Salary int not null,
 	ManagerID char(10),
 	WorksAt int not null,
-	primary key (EmployeeID),
-	foreign	key (WorksAt) references STORE (StoreNo) on delete cascade on update cascade,
-	foreign key (ManagerID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
+	constraint EmployeeKey primary key (EmployeeID),
+	constraint Employee1 foreign key (WorksAt) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint Employee2 foreign key (ManagerID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into EMPLOYEE values ('9876543210', 'Nigga', 'Gay', 'Employeet', '2001-02-18', '3', 'M', '42069', NULL, '1');
@@ -39,7 +39,7 @@ create table EMPLOYEE_CONTACTNOS (
 	EmployeeID char(10) not null,
 	ContactNo char(10) not null,
 	constraint EmployeeContactNosKey primary key (EmployeeID, ContactNo),
-	foreign key (EmployeeID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
+	constraint EmployeeContactNos1 foreign key (EmployeeID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 );
 
 insert into EMPLOYEE_CONTACTNOS values ('9876543210', '2122122121');
@@ -52,8 +52,8 @@ create table CUSTOMER (
 	Lname char(20) not null,
 	TotalPurchaseValue float not null default '0',
 	VerifiedBy char(10) not null,
-	primary key (CustomerID),
-	foreign key (VerifiedBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
+	constraint CustomerKey primary key (CustomerID),
+	constraint Customer1 foreign key (VerifiedBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into CUSTOMER values ('1234567890', 'Anirudh', 'Narayan', 'Palutla', '0', '9876543210');
@@ -64,7 +64,7 @@ create table CUSTOMER_CONTACTNOS (
 	CustomerID char(10) not null,
 	ContactNo char(10) not null,
 	constraint CustomerContactNosKey primary key (CustomerID, ContactNo),
-	foreign key (CustomerID) references CUSTOMER (CustomerID) on delete cascade on update cascade
+	constraint CustomerContactNos1 foreign key (CustomerID) references CUSTOMER (CustomerID) on delete cascade on update cascade
 );
 
 insert into CUSTOMER_CONTACTNOS values ('1234567890', '1111111112');
@@ -80,7 +80,7 @@ create table DEPENDANT (
 	Lname char(20) not null,
 	ContactNo char(10) not null,			/* left as atomic attribute for now */
 	constraint DependantKey primary key (DependsOn, Fname, Lname),
-	foreign key (DependsOn) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
+	constraint Dependant1 foreign key (DependsOn) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into DEPENDANT values ('9876543210', 'Fag', NULL, 'Yeet', '6969696969');
@@ -89,8 +89,8 @@ insert into DEPENDANT values ('9876543210', 'Fag', NULL, 'Yeet', '6969696969');
 create table STORE_CONTACTNOS (
 	StoreNo int not null,
 	ContactNo char(10) not null,
-	constraint StoreContactKey primary key (StoreNo, ContactNo),
-	foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade
+	constraint StoreContactNosKey primary key (StoreNo, ContactNo),
+	constraint StoreContactNos1 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into STORE_CONTACTNOS values ('1', '1231231231');
@@ -102,7 +102,7 @@ create table MANUFACTURER (
 	Name char(40) not null,
 	Country char(15) not null,
 	YearEst date not null,
-	primary key (Name)
+	constraint ManufacturerKey primary key (Name)
 ) engine=InnoDB default charset=latin1;
 
 insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001-09-11');
@@ -112,7 +112,7 @@ create table FACTORY (
 	ManufacturerName char(40) not null,
 	LocationID char(20) not null,
 	constraint FactoryKey primary key (ManufacturerName, LocationID),
-	foreign key (ManufacturerName) references MANUFACTURER (Name) on delete cascade on update cascade
+	constraint Factory1 foreign key (ManufacturerName) references MANUFACTURER (Name) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into FACTORY values ('JihadTime', 'Karachi');
@@ -123,8 +123,8 @@ create table FACTORY_CONTACTNOS (
 	FactoryManufacturerName char(40) not null,
 	FactoryLocationID char(20) not null,
 	ContactNo char(10) not null,
-	constraint FactoryContactKey primary key (FactoryManufacturerName, FactoryLocationID, ContactNo),
-	constraint FMN_FK foreign key (FactoryManufacturerName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
+	constraint FactoryContactNosKey primary key (FactoryManufacturerName, FactoryLocationID, ContactNo),
+	constraint FactoryContactNos1 foreign key (FactoryManufacturerName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into FACTORY_CONTACTNOS values ('JihadTime', 'Karachi', '1111111111');
@@ -136,7 +136,7 @@ create table AMMO (
 	NoOfRounds bigint not null,
 	Caliber char(10) not null,
 	Cost bigint not null, 
-	primary key (CartridgeName)
+	constraint AmmoKey primary key (CartridgeName)
 ) engine=InnoDB default charset=latin1;
 
 insert into AMMO values ('TulAmmo 223 Rem', 'FMJ', '1000', '.223', '132074');
@@ -166,9 +166,9 @@ create table SUPPLIED_BY (
 	StoreNo int not null,
 	FactoryName char(40) not null,
 	FactoryLocationID char(20) not null,
-	constraint SupplyKey primary key (StoreNo, FactoryName, FactoryLocationID),
-	constraint StoreNoKey foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
-	constraint FactoryKey foreign key (FactoryName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
+	constraint SuppliedByKey primary key (StoreNo, FactoryName, FactoryLocationID),
+	constraint SuppliedBy1 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SuppliedBy2 foreign key (FactoryName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 create table SOLD (
@@ -180,13 +180,13 @@ create table SOLD (
 	Gun_ModelType char(40) not null,
 	Attachment_Manufacturer char(40) not null,
 	Attachment_ModelType char(40) not null,
-	constraint SaleKey primary key (SoldTo, SoldBy, StoreNo, Ammo, Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType),
-	constraint SoldTo_FK foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
-	constraint SoldBy_FK foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
-	constraint StoreNum_FK foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
-	constraint Ammo_FK foreign key (Ammo) references AMMO (CartridgeName) on delete cascade on update cascade,
-	constraint Gun_FK foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint Attachment_FK foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
+	constraint SoldKey primary key (SoldTo, SoldBy, StoreNo, Ammo, Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType),
+	constraint SoldKey1 foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
+	constraint SoldKey2 foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
+	constraint SoldKey3 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldKey4 foreign key (Ammo) references AMMO (CartridgeName) on delete cascade on update cascade,
+	constraint SoldKey5 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint SoldKey6 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 
@@ -194,8 +194,8 @@ create table BARREL (
 	Manufacturer char(40) not null,
 	ModelType char(40) not null, 
 	BarrelLength float not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint BarrelKey primary key (Manufacturer, ModelType),
+	constraint Barrel1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
 create table GRIP (
@@ -203,16 +203,16 @@ create table GRIP (
 	ModelType char(40) not null, 
 	_Length float not null,
 	Material char(40) not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint GripKey primary key (Manufacturer, ModelType),
+	constraint Grip1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
 create table FLASHLIGHT (
 	Manufacturer char(40) not null,
 	ModelType char(40) not null, 
 	_Range float not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint FlashlightKey primary key (Manufacturer, ModelType),
+	constraint Flashlight1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
 create table SCOPE (
@@ -220,8 +220,8 @@ create table SCOPE (
 	ModelType char(40) not null, 
 	_Type char(40) not null,
 	Zoom float not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint ScopeKey primary key (Manufacturer, ModelType),
+	constraint Scope1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
 create table LASER (
@@ -230,8 +230,8 @@ create table LASER (
 	Wavelength float not null,
 	Colour char(20) not null,
 	_Range float not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint LaserKey primary key (Manufacturer, ModelType),
+	constraint Laser1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
 create table MAGAZINE (
@@ -239,6 +239,32 @@ create table MAGAZINE (
 	ModelType char(40) not null, 
 	_Length float not null,
 	Capacity int not null,
-	constraint AttachmentKey primary key (Manufacturer, ModelType),
-	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+	constraint MagazineKey primary key (Manufacturer, ModelType),
+	constraint Magazine1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
+
+create table FITS (
+	Gun_Manufacturer char(40) not null,
+	Gun_ModelType char(40) not null,
+	Attachment_Manufacturer char(40) not null,
+	Attachment_ModelType char(40) not null,
+	CartridgeName char(40) not null,
+	constraint FitsKey primary key (Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType, CartridgeName),
+	constraint Fits1 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint Fits2 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint Fits3 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
+
+create table SOLD_AT (
+	StoreNo int not null,
+	Gun_Manufacturer char(40) not null,
+	Gun_ModelType char(40) not null,
+	Attachment_Manufacturer char(40) not null,
+	Attachment_ModelType char(40) not null,
+	CartridgeName char(40) not null,
+	constraint SoldAtKey primary key (StoreNo, Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType, CartridgeName),
+	constraint SoldAt1 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldAt2 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint SoldAt3 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint SoldAt4 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
