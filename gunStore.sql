@@ -197,3 +197,48 @@ create table BARREL (
 	constraint AttachmentKey primary key (Manufacturer, ModelType),
 	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
+
+create table GRIP (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	_Length float not null,
+	Material char(40) not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
+
+create table FLASHLIGHT (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	_Range float not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
+
+create table SCOPE (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	_Type char(40) not null,
+	Zoom float not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
+
+create table LASER (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	Wavelength float not null,
+	Colour char(20) not null,
+	_Range float not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
+
+create table MAGAZINE (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	_Length float not null,
+	Capacity int not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
