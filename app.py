@@ -236,7 +236,7 @@ def choice_employee ():
         print("1. Add a new employee")
         print("2. Update existing employee information")
         print("3. Delete an employee")
-        print("4. Cancel")
+        print("4. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             employee_add()
@@ -251,13 +251,116 @@ def choice_employee ():
             input("Press ENTER to continue>")
     return
 
+# CUSTOMER related functions
+def customer_exist(cid):
+    query = f"select * from CUSTOMER where CustomerID='{cid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Customer with ID {cid} does not exist in the database")
+    return
+
+def choice_customer():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new customer")
+        print("2. Update existing customer information")
+        print("3. Go back")
+        ops = int(input("Your choice> "))
+        if ops == 1:
+            customer_add()
+        elif ops == 2:
+            customer_update()
+        elif ops == 3:
+            break
+        else:
+            print("Invalid option. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
+def customer_add():
+    try:
+        customer = {}
+        print("Please enter the customer's information")
+        while ( 1 ):
+            customer["id"] = input("Customer ID (10-digit code consisting of characters): ")
+            if len(customer["id"]) == 10:
+                break
+            else:
+                print("Invalid Customer ID. Please enter again.")
+        customer["fname"] = input("First name: ")
+        mn = input("Does customer have a middle name (y for yes)?: ")
+        if mn == 'y':
+            customer["mname"] = input("Middle name: ")
+        else:
+            customer["mname"] = "NULL"
+        customer["lname"] = input("Last name: ")
+        customer["tpv"] = int(input("Total purchase value: "))
+        customer["vfb"] = input("ID of Employee that verified the customer (has to exist in EMPLOYEE already):  ")
+        query = f"insert into CUSTOMER values ('{customer['id']}', '{customer['fname']}', '{customer['mname']}', \
+                '{customer['lname']}', '{customer['tpv']}', '{customer['vfb']}'); "
+        print("Query = ", query)
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+
+def customer_update():
+    try:
+        clear()
+        cid = int(input("Customer ID of the customer you want to edit: "))
+        customer_exist(cid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. First Name")
+            print("2. Middle Name")
+            print("3. Last Name")
+            print("4. Total Purchase Value")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                inp = input("Updated first name: ")
+                query = f"update CUSTOMER set Fname='{inp}' where CustomerID='{cid}';"
+            elif ops == 2:
+                inp = input("Updated middle name: ")
+                query = f"update CUSTOMER set Mname='{inp}' where CustomerID='{cid}';"
+            elif ops == 3:
+                inp = input("Updated last name: ")
+                query = f"update CUSTOMER set Lname='{inp}' where CustomerID='{cid}';"
+            elif ops == 4:
+                inp = input("Updated total purchase value: ")
+                query = f"update CUSTOMER set TotalPurchaseValue='{inp}' where CustomerID='{cid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
 
 # Overall functions
 def choices (ch):
     if ch == 1:
         choice_store()
     elif ch == 2:
-        choice_employee()
+        choice_customer()
+    elif ch == 3:
+        choice_customer()
     else:
         print("Invalid input. Please try again.")
     return
