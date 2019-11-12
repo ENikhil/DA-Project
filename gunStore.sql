@@ -7,13 +7,13 @@ use GUN_STORE;
 
 create table STORE (
 	StoreNo INT NOT NULL AUTO_INCREMENT,
-	_Location char(50) NOT NULL,
+	LocationID char(50) NOT NULL,
 	constraint StoreKey primary key (StoreNo)
 ) engine=InnoDB default charset=latin1;
 
-insert into STORE (_Location) values ('Hyderabad');
-insert into STORE (_Location) values ('Bangalore');
-insert into STORE (_Location) values ('Chennai');
+insert into STORE (LocationID) values ('Hyderabad');
+insert into STORE (LocationID) values ('Bangalore');
+insert into STORE (LocationID) values ('Chennai');
 
 
 create table EMPLOYEE (
@@ -99,20 +99,20 @@ insert into STORE_CONTACTNOS values ('2', '2232232232');
 insert into STORE_CONTACTNOS values ('2', '1262232232');
 
 create table MANUFACTURER (
-	Name char(40) not null,
-	Country char(15) not null,
-	YearEst date not null,
-	constraint ManufacturerKey primary key (Name)
+	NameID char(40) not null,
+	Country char(75) not null,
+	YearEst int not null,
+	constraint ManufacturerKey primary key (NameID)
 ) engine=InnoDB default charset=latin1;
 
-insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001-09-11');
+insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001');
 
 
 create table FACTORY (
 	ManufacturerName char(40) not null,
 	LocationID char(20) not null,
 	constraint FactoryKey primary key (ManufacturerName, LocationID),
-	constraint Factory1 foreign key (ManufacturerName) references MANUFACTURER (Name) on delete cascade on update cascade
+	constraint Factory1 foreign key (ManufacturerName) references MANUFACTURER (NameID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
 insert into FACTORY values ('JihadTime', 'Karachi');

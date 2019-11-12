@@ -54,7 +54,7 @@ def store_update():
                 query = f"update STORE set StoreNo={inp} where StoreNo={store['no']};"
             elif ops == 2:
                 inp = input("Updated location: ")
-                query = f"update STORE set Location='{inp}' where StoreNo={store['no']};"
+                query = f"update STORE set LocationID='{inp}' where StoreNo={store['no']};"
             else:
                 print("Invalid input. Please try again")
                 continue
@@ -251,6 +251,17 @@ def choice_employee ():
             input("Press ENTER to continue>")
     return
 
+
+# MANUFACTURER related functions
+def manufacturer_exist(mnid):
+    query = f"select * from MANUFACTURER where NameID='{mnid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Manufacturer name {mnid} does not exist in database. Please enter a valid manufacturer name")
+    return
+
 # CUSTOMER related functions
 def customer_exist(cid):
     query = f"select * from CUSTOMER where CustomerID='{cid}';"
@@ -258,6 +269,27 @@ def customer_exist(cid):
     con.commit()
     rows = cur.fetchall()
     if (len(rows) == 0):
+        raise Exception(f"Customer ID {cid} does not exist in database. Please enter a valid customer ID.")
+    return
+
+
+def manufacturer_add():
+    try:
+        manufacturer = {}
+        clear()
+        while ( 1 ):
+            print("The allowed manufacturer names are non null strings shorter than 40 characters")
+            manufacturer["nameid"] = input("Manufacturer Name: ")
+            if 0 < len(manufacturer["nameid"]) < 40 :
+                break
+            else:
+                print("Invalid Manufacturer name. Please try again.")
+        manufacturer["country"] = input("Country: ")
+        manufacturer["yearest"] = input("Year established: ")
+        query = f"insert into MANUFACTURER values ('{manufacturer['nameid']}', '{manufacturer['country']}', '{manufacturer['yearest']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
         raise Exception(f"Customer with ID {cid} does not exist in the database")
     return
 
@@ -309,6 +341,54 @@ def customer_add():
         print("Failed to insert")
         print(">>>", e)
         input("Press ENTER to continue>")
+    return
+
+def manufacturer_update():
+    try:
+        clear()
+        mnid = input("Name of the manufacturer you want to edit: ")
+        manufacturer_exist(mnid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Manufacturer Name")
+            print("2. Country")
+            print("3. Year Established")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Manufacturer Name: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Manufacturer Name. Please try again.")
+                query = f"update MANUFACTURER set NameID='{inp}' where NameID='{mnid}';"
+            elif ops == 2:
+                inp = input("Updated country: ")
+                query = f"update MANUFACTURER set Country='{inp}' where NameID='{mnid}';"
+            elif ops == 3:
+                while ( 1 ):
+                    inp = input("Updated year established: ")
+                    if 0 < int(inp) <= 2020:
+                        break
+                    else:
+                        print("Invalid input. Please enter a valid year.")
+                query = f"update MANUFACTURER set YearEst='{inp}' where NameID='{mnid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
 
 
 def customer_update():
@@ -353,14 +433,52 @@ def customer_update():
     return
 
 
+def manufacturer_delete():
+    try:
+        clear()
+        mnid = input("Name of the manufacturer you want to delete: ")
+        manufacturer_exist(mnid)
+        query = f"delete from MANUFACTURER where NameID='{mnid}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_manufacturer():
+    while ( 1 ):
+        clear()
+        print("1. Add a new manufacturer")
+        print("2. Update existing manufacturer information")
+        print("3. Delete an manufacturer")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            manufacturer_add()
+        elif ch == 2:
+            manufacturer_update()
+        elif ch == 3:
+            manufacturer_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+
 # Overall functions
 def choices (ch):
     if ch == 1:
         choice_store()
     elif ch == 2:
-        choice_customer()
+        choice_employee()
     elif ch == 3:
         choice_customer()
+    elif ch == 4:
+        choice_manufacturer()
     else:
         print("Invalid input. Please try again.")
     return
