@@ -86,7 +86,8 @@ def choice_store ():
         print("1. Add a new store")
         print("2. Update existing store information")
         print("3. Delete a store")
-        print("4. Cancel")
+        print("4. Manage contact numbers")
+        print("5. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -95,10 +96,68 @@ def choice_store ():
         elif ch == 3:
             store_delete()
         elif ch == 4:
+            store_contactnos()
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
     return
+
+def store_contactnos ():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new contact number")
+        print("2. Delete existing contact number")
+        print("3. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 3:
+            break
+        elif ch == 1:
+            store_contactnos_add()
+        elif ch == 2:
+            store_contactnos_delete()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def store_contactnos_add():
+    try:
+        print("Please enter the required details.")
+        sn = input("Store number: ")
+        store_exist(sn)
+        cn = input("Contact number: ")
+        query = f"insert into STORE_CONTACTNOS values ('{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def store_contactnos_delete():
+    try:
+        print("Please enter the required details.")
+        sn = input("Store number: ")
+        store_exist(sn)
+        cn = input("Contact number: ")
+        cur.execute(f"select * from STORE_CONTACTNOS where StoreNo='{sn}' and ContactNo='{cn}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from STORE_CONTACTNOS where StoreNo='{sn}' and ContactNo='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
 
 
 # EMPLOYEE related functions
@@ -353,7 +412,7 @@ def choice_manufacturer():
         clear()
         print("1. Add a new manufacturer")
         print("2. Update existing manufacturer information")
-        print("3. Delete an manufacturer")
+        print("3. Delete a manufacturer")
         print("4. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
@@ -471,6 +530,51 @@ def customer_update():
         input("Press ENTER to continue>")
     return
 
+  
+# GUN_MODEL related functions
+def gunmodel_exist(gmm, gmmt):
+    query = f"select ModelType from GUN_MODEL where Manufacturer='{gm}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if gmmt in rows['ModelType']:
+        return
+    else:
+        raise Exception(f"Gun with Manufacturer {gmm} and Model Type {gmmt} does not exist in the database. Please try again.")
+    return
+
+def gunmodel_add():
+    try:
+        gunmodel = {}
+        clear()
+        while ( 1 ):
+            print("The allowed gun manufacturer names are non null strings shorter than 40 characters")
+            gunmodel["manid"] = input("Gun Manufacturer Name: ")
+            if 0 < len(gunmodel["manid"]) < 40 :
+                break
+            else:
+                print("Invalid Gun Manufacturer name. Please try again.")
+        while ( 1 ):
+            print("The allowed gun model types are non null strings shorter than 40 characters")
+            gunmodel["typeid"] = input("Gun Model Type: ")
+            if 0 < len(gunmodel["typeid"]) < 40 :
+                break
+            else:
+                print("Invalid Gun Model type. Please try again.")
+        gunmodel["cost"] = input("Cost: ")
+        gunmodel["firerate"] = input("Firerate: ")
+        gunmodel["colour"] = input("Colour: ")
+        query = f"insert into GUN_MODEL values ('{gunmodel['manid']}', '{gunmodel['typeid']}', '{gunmodel['cost']}', '{gunmodel['firerate']}', '{gunmodel['colour']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
 # AMMO related functions
 def ammo_exist(aid):
     query = f"select * from AMMO where CartridgeName='{aid}';"
@@ -502,10 +606,67 @@ def ammo_add():
         print("Inserted into database")
     except Exception as e:
         con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def gunmodel_update():
+    try:
+        clear()
+        gmm = input("Manufacturer of the gun model you want to edit: ")
+        gmmt = input("Type of the gun model you want to edit: ")
+        gunmodel_exist(gmm, gmmt)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Manufacturer Name")
+            print("2. Model Type")
+            print("3. Cost")
+            print("4. Firerate")
+            print("5. Colour")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):    
+                    inp = input("Updated Gun Manufacturer Name: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Gun Manufacturer Name. Please try again.")
+                query = f"update GUN_MODEL set Manufacturer='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 2:
+                while ( 1 ):
+                    inp = input("Updated Gun Model Type: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Gun Model Type. Please try again.")
+                query = f"update GUN_MODEL set ModelType='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 3:
+                inp = input("Updated cost: ")
+                query = f"update GUN_MODEL set Cost='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 4:
+                inp = input("Updated firerate: ")
+                query = f"update GUN_MODEL set Firerate='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"    
+            elif ops == 5:
+                inp = input("Updated colour: ")
+                query = f"update GUN_MODEL set Colour='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
         print("Failed to update")
         print(">>>", e)
         input("Press ENTER to continue>")
     return
+  
 
 def ammo_update():
     try:
@@ -577,6 +738,22 @@ def ammo_update():
         input("Press ENTER to continue>")
     return
 
+
+def gunmodel_delete():
+    try:
+        clear()
+        gmm = input("Manufacturer of the gun model you want to delete: ")
+        gmmt = input("Type of the gun model you want to delete: ")
+        gunmodel_exist(gmm, gmmt)
+        query = f"delete from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
 def ammo_delete():
     try:
         clear()
@@ -590,6 +767,28 @@ def ammo_delete():
         print("Failed to delete")
         print(">>>", e)
         input("Press ENTER to continue>")
+
+
+def choice_gunmodel():
+    while ( 1 ):
+        clear()
+        print("1. Add a new gun model")
+        print("2. Update existing gun model information")
+        print("3. Delete a gun model")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            gunmodel_add()
+        elif ch == 2:
+            gunmodel_update()
+        elif ch == 3:
+            gunmodel_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
 
 def choice_ammo():
     while(1):
@@ -612,6 +811,173 @@ def choice_ammo():
             input("Press ENTER to continue>")
     return
 
+
+# ATTACHMENT related functions
+# ATTACHMENT related functions
+def attachment_exist(mn, mdt):
+    query = f"select ModelType from ATTACHMENT where Manufacturer='{mn}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if mdt in rows['ModelType']:
+        return
+    else:
+        raise Exception(f"Attachment with Manufacturer {mn} and Model Type {mdt} does not exist \
+                in the database. Please try again.")
+    return
+
+def choice_attachment():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?\n" +
+                "1. Add a new attachment\n" +
+                "2. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 2:
+            break
+        elif ch == 1:
+            attachment_add()
+        else:
+            print("Invalid choice. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
+def attachment_add():
+    try:
+        clear()
+        att = {}
+        print("Please enter attachment information.")
+        att["mn"] = input("Manufacturer name: ")
+        att["mdt"] = input("Model type: ")
+        att["cost"] = int(input("Cost: "))
+        ch = 0 
+        while ( 1 ):
+            print("Please select an attachment type:\n" +
+                    "1. Barrel\n" +  
+                    "2. Flashlight\n" +  
+                    "3. Laser\n" +  
+                    "4. Magazine\n" +  
+                    "5. Grip\n" +  
+                    "6. Scope")
+            ch = int(input("Your choice> "))
+            if ch == 1:
+                att["at"] = "Barrel"
+            elif ch == 2:
+                att["at"] = "Flashlight"
+            elif ch == 3:
+                att["at"] = "Laser"
+            elif ch == 4:
+                att["at"] = "Magazine"
+            elif ch == 5:
+                att["at"] = "Grip"
+            elif ch == 6:
+                att["at"] = "Scope"
+            else:
+                print("Invalid choice. Please enter a valid number.")
+                input("Press ENTER to continue>")
+                continue
+            break
+        query = f"insert into ATTACHMENT values ('{att['mn']}', '{att['mdt']}', '{att['cost']}', '{att['at']}');"
+        cur.execute(query)
+        con.commit()
+        if ch == 1:
+            barrel_add(att["mn"], att["mdt"])
+        elif ch == 2:
+            flashlight_add(att["mn"], att["mdt"])
+        elif ch == 3:
+            laser_add(att["mn"], att["mdt"])
+        elif ch == 4:
+            magazine_add(att["mn"], att["mdt"])
+        elif ch == 5:
+            grip_add(att["mn"], att["mdt"])
+        elif ch == 6:
+            scope_add(att["mn"], att["mdt"])
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert attachment")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+
+def barrel_add(mn, mdt):
+    try:
+        bl = float(input("Barrel length: "))
+        query = f"insert into BARREL values ('{mn}', '{mdt}', '{bl}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert barrel")
+        print(">>>", e)
+    return
+
+def flashlight_add(mn, mdt):
+    try:
+        rng = float(input("Range: "))
+        query = f"insert into FLASHLIGHT values ('{mn}', '{mdt}', '{rng}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert flashlight")
+        print(">>>", e)
+    return
+
+def laser_add(mn, mdt):
+    try:
+        wl = float(input("Barrel length: "))
+        clr = input("Colour: ")
+        rng = input("Range: ")
+        query = f"insert into LASER values ('{mn}', '{mdt}', '{wl}', '{clr}', '{rng}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert LASER")
+        print(">>>", e)
+    return
+
+def magazine_add(mn, mdt):
+    try:
+        ln = float(input("Magazine length: "))
+        cap = int(input("Capacity: "))
+        query = f"insert into MAGAZINE values ('{mn}', '{mdt}', '{ln}', '{cap}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert magazine")
+        print(">>>", e)
+    return
+
+def grip_add(mn, mdt):
+    try:
+        ln = float(input("Grip length: "))
+        mat = input("Material: ")
+        query = f"insert into GRIP values ('{mn}', '{mdt}', '{ln}', '{mat}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert grip")
+        print(">>>", e)
+    return
+
+def scope_add(mn, mdt):
+    try:
+        typ = input("Scope Type: ")
+        zm = float(input("Zoom: "))
+        query = f"insert into SCOPE values ('{mn}', '{mdt}', '{typ}', '{zm}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert scope")
+        print(">>>", e)
+    return
+
+
 # Overall functions
 def choices (ch):
     if ch == 1:
@@ -622,6 +988,8 @@ def choices (ch):
         choice_customer()
     elif ch == 4:
         choice_manufacturer()
+    elif ch == 5:
+        choice_attachment()
     else:
         print("Invalid input. Please try again.")
     return
@@ -657,16 +1025,26 @@ while(1):
             cur = con.cursor()
             while ( 1 ):
                 clear()
-                print("Which information would you like to access?")
+                print("\n\n\t\tWELCOME TO THE GUN STORE!\n\n")
+                print(' \n\
+ ,________________________________       \n\
+|__________,----------._ [____]  ""-,__  __...-----==="\n\
+        (_(||||||||||||)___________/   ""             |\n\
+           `-----------\'        [ ))"-,               |\n\
+                                ""    `,  _,--...___  |\n\
+                                        `/          """"\n\
+                                        \n\n')
+                print("Which information would you like to access today?")
                 print("1. Stores")
                 print("2. Employees")
                 print("3. Customers")
                 print("4. Manufacturers")
-                print("5. Logout")
+                print("5. Attachments")
+                print("6. Logout")
                 ch = int(input("Enter choice> "))
                 clear()
 
-                if ch == 5:
+                if ch == 6:
                     break
                 else:
                     choices(ch)
