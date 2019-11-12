@@ -608,6 +608,172 @@ def choice_gunmodel():
     return
 
 
+# ATTACHMENT related functions
+# ATTACHMENT related functions
+def attachment_exist(mn, mdt):
+    query = f"select ModelType from ATTACHMENT where Manufacturer='{mn}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if mdt in rows['ModelType']:
+        return
+    else:
+        raise Exception(f"Attachment with Manufacturer {mn} and Model Type {mdt} does not exist \
+                in the database. Please try again.")
+    return
+
+def choice_attachment():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?\n" +
+                "1. Add a new attachment\n" +
+                "2. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 2:
+            break
+        elif ch == 1:
+            attachment_add()
+        else:
+            print("Invalid choice. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
+def attachment_add():
+    try:
+        clear()
+        att = {}
+        print("Please enter attachment information.")
+        att["mn"] = input("Manufacturer name: ")
+        att["mdt"] = input("Model type: ")
+        att["cost"] = int(input("Cost: "))
+        ch = 0 
+        while ( 1 ):
+            print("Please select an attachment type:\n" +
+                    "1. Barrel\n" +  
+                    "2. Flashlight\n" +  
+                    "3. Laser\n" +  
+                    "4. Magazine\n" +  
+                    "5. Grip\n" +  
+                    "6. Scope")
+            ch = int(input("Your choice> "))
+            if ch == 1:
+                att["at"] = "Barrel"
+            elif ch == 2:
+                att["at"] = "Flashlight"
+            elif ch == 3:
+                att["at"] = "Laser"
+            elif ch == 4:
+                att["at"] = "Magazine"
+            elif ch == 5:
+                att["at"] = "Grip"
+            elif ch == 6:
+                att["at"] = "Scope"
+            else:
+                print("Invalid choice. Please enter a valid number.")
+                input("Press ENTER to continue>")
+                continue
+            break
+        query = f"insert into ATTACHMENT values ('{att['mn']}', '{att['mdt']}', '{att['cost']}', '{att['at']}');"
+        cur.execute(query)
+        con.commit()
+        if ch == 1:
+            barrel_add(att["mn"], att["mdt"])
+        elif ch == 2:
+            flashlight_add(att["mn"], att["mdt"])
+        elif ch == 3:
+            laser_add(att["mn"], att["mdt"])
+        elif ch == 4:
+            magazine_add(att["mn"], att["mdt"])
+        elif ch == 5:
+            grip_add(att["mn"], att["mdt"])
+        elif ch == 6:
+            scope_add(att["mn"], att["mdt"])
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert attachment")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+
+def barrel_add(mn, mdt):
+    try:
+        bl = float(input("Barrel length: "))
+        query = f"insert into BARREL values ('{mn}', '{mdt}', '{bl}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert barrel")
+        print(">>>", e)
+    return
+
+def flashlight_add(mn, mdt):
+    try:
+        rng = float(input("Range: "))
+        query = f"insert into FLASHLIGHT values ('{mn}', '{mdt}', '{rng}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert flashlight")
+        print(">>>", e)
+    return
+
+def laser_add(mn, mdt):
+    try:
+        wl = float(input("Barrel length: "))
+        clr = input("Colour: ")
+        rng = input("Range: ")
+        query = f"insert into LASER values ('{mn}', '{mdt}', '{wl}', '{clr}', '{rng}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert LASER")
+        print(">>>", e)
+    return
+
+def magazine_add(mn, mdt):
+    try:
+        ln = float(input("Magazine length: "))
+        cap = int(input("Capacity: "))
+        query = f"insert into MAGAZINE values ('{mn}', '{mdt}', '{ln}', '{cap}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert magazine")
+        print(">>>", e)
+    return
+
+def grip_add(mn, mdt):
+    try:
+        ln = float(input("Grip length: "))
+        mat = input("Material: ")
+        query = f"insert into GRIP values ('{mn}', '{mdt}', '{ln}', '{mat}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert grip")
+        print(">>>", e)
+    return
+
+def scope_add(mn, mdt):
+    try:
+        typ = input("Scope Type: ")
+        zm = float(input("Zoom: "))
+        query = f"insert into SCOPE values ('{mn}', '{mdt}', '{typ}', '{zm}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert scope")
+        print(">>>", e)
+    return
+
+
 # Overall functions
 def choices (ch):
     if ch == 1:
@@ -618,6 +784,8 @@ def choices (ch):
         choice_customer()
     elif ch == 4:
         choice_manufacturer()
+    elif ch == 5:
+        choice_attachment()
     else:
         print("Invalid input. Please try again.")
     return
@@ -658,11 +826,12 @@ while(1):
                 print("2. Employees")
                 print("3. Customers")
                 print("4. Manufacturers")
-                print("5. Logout")
+                print("5. Attachments")
+                print("6. Logout")
                 ch = int(input("Enter choice> "))
                 clear()
 
-                if ch == 5:
+                if ch == 6:
                     break
                 else:
                     choices(ch)
