@@ -159,7 +159,6 @@ def store_contactnos_delete():
     return
 
 
-
 # EMPLOYEE related functions
 def employee_exist(eid):
     query = f"select * from EMPLOYEE where EmployeeID={eid};"
@@ -295,7 +294,8 @@ def choice_employee ():
         print("1. Add a new employee")
         print("2. Update existing employee information")
         print("3. Delete an employee")
-        print("4. Go back")
+        print("4. Manage contact numbers")
+        print("5. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             employee_add()
@@ -308,6 +308,136 @@ def choice_employee ():
         else:
             print("Invalid choice. Please try again")
             input("Press ENTER to continue>")
+    return
+
+#DEPENDANT related functions
+def dependant_exist(eid, fn, mn, ln):
+    query = f"select * from DEPENDANT where DependsOn='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if len(rows) > 0:
+        return
+    else:
+        raise Exception(f"Gun with Manufacturer {gmm} and Model Type {gmmt} does not exist in the database. Please try again.")
+    return
+
+def dependant():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new dependant")
+        print("2. Delete existing dependant")
+        print("3. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 3:
+            break
+        elif ch == 1:
+            dependant_add()
+        elif ch == 2:
+            dependant_delete()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def dependant_add():
+    try:
+        print("Please enter the required details.")
+        eid = int(input("Employee ID: "))
+        employee_exist(sn)
+        fn = input("First name: ")
+        mn = input("Middle name: ")
+        ln = input("Last name: ")
+        cn = input("Contact number: ")
+        query = f"insert into DEPENDANT values ('{eid}', '{fn}', '{mn}', '{ln}', {cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def dependant_delete():
+    try:
+        print("Please enter the required details.")
+        eid = input("Employee ID: ")
+        fn = input("First name: ")
+        mn = input("Middle name: ")
+        ln = input("Last name: ")
+        dependant_exist(eid, fn, mn, ln)
+        cn = input("Contact number: ")
+        cur.execute(f"select * from DEPENDANT where EmployeeID='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from DEPENDANT where EmployeeID='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+
+#EMPLOYEE_CONTACT_NOS related functions
+def employee_contactnos ():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new contact number")
+        print("2. Delete existing contact number")
+        print("3. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 3:
+            break
+        elif ch == 1:
+            employee_contactnos_add()
+        elif ch == 2:
+            employee_contactnos_delete()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def employee_contactnos_add():
+    try:
+        print("Please enter the required details.")
+        sn = int(input("Employee ID: "))
+        employee_exist(sn)
+        cn = input("Contact number: ")
+        query = f"insert into EMPLOYEE_CONTACTNOS values ('{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def employee_contactnos_delete():
+    try:
+        print("Please enter the required details.")
+        sn = input("Employee ID: ")
+        employee_exist(sn)
+        cn = input("Contact number: ")
+        cur.execute(f"select * from EMPLOYEE_CONTACTNOS where EmployeeID='{sn}' and ContactNo='{cn}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from EMPLOYEE_CONTACTNOS where EmployeeID='{sn}' and ContactNo='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
     return
 
 
@@ -392,7 +522,6 @@ def manufacturer_update():
         input("Press ENTER to continue>")
     return
 
-
 def manufacturer_delete():
     try:
         clear()
@@ -428,6 +557,133 @@ def choice_manufacturer():
             input("Press ENTER to continue>")
     return
 
+#FACTORY related functions
+def factory_exist(mn, lid):
+    query = f"select * from FACTORY where ManufacturerName='{mn}' and LocationID='{lid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if len(rows) > 0:
+        return
+    else:
+        raise Exception(f"Factory belonging to manufacturer {mn} in {lid} does not exist in the database. Please try again.")
+    return
+
+def factory():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new factory")
+        print("2. Delete existing factory")
+        print("3. Manage contact numbers")
+        print("4. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 4:
+            break
+        elif ch == 1:
+            factory_add()
+        elif ch == 2:
+            factory_delete()
+        elif ch == 3:
+            factory_contactnos()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def factory_add():
+    try:
+        print("Please enter the required details.")
+        sn = input("Manufacturer Name: ")
+        manufacturer_exist(sn)
+        cn = input("Factory Location: ")
+        query = f"insert into FACTORY values ('{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def factory_delete():
+    try:
+        print("Please enter the required details.")
+        sn = input("Manufacturer Name: ")
+        manufacturer_exist(sn)
+        cn = input("Location: ")
+        cur.execute(f"select * from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+ 
+def factory_contactnos ():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new contact number")
+        print("2. Delete existing contact number")
+        print("3. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 3:
+            break
+        elif ch == 1:
+            factory_contactnos_add()
+        elif ch == 2:
+            factory_contactnos_delete()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def factory_contactnos_add():
+    try:
+        print("Please enter the required details.")
+        sn = input("Manufacturer Name: ")
+        lid = input("Location: ")
+        factory_exist(sn, lid)
+        cn = input("Contact number: ")
+        query = f"insert into FACTORY_CONTACTNOS values ('{sn}', '{lid}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def factory_contactnos_delete():
+    try:
+        print("Please enter the required details.")
+        sn = input("Manufacturer Name: ")
+        lid = input("Location: ")
+        factory_exist(sn, lid)
+        cn = input("Contact number: ")
+        cur.execute(f"select * from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
 
 # CUSTOMER related functions
 def customer_exist(cid):
@@ -437,25 +693,6 @@ def customer_exist(cid):
     rows = cur.fetchall()
     if (len(rows) == 0):
         raise Exception(f"Customer ID {cid} does not exist in database. Please enter a valid customer ID.")
-    return
-
-def choice_customer():
-    while ( 1 ):
-        clear()
-        print("What would you like to do?")
-        print("1. Add new customer")
-        print("2. Update existing customer information")
-        print("3. Go back")
-        ops = int(input("Your choice> "))
-        if ops == 1:
-            customer_add()
-        elif ops == 2:
-            customer_update()
-        elif ops == 3:
-            break
-        else:
-            print("Invalid option. Please try again.")
-            input("Press ENTER to continue>")
     return
 
 def customer_add():
@@ -530,10 +767,31 @@ def customer_update():
         input("Press ENTER to continue>")
     return
 
-  
+def choice_customer():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new customer")
+        print("2. Update existing customer information")
+        print("3. Manage contact numbers")
+        print("4. Go back")
+        ops = int(input("Your choice> "))
+        if ops == 1:
+            customer_add()
+        elif ops == 2:
+            customer_update()
+        elif ops == 3:
+            customer_contactnos()
+        elif ops == 4:
+            break
+        else:
+            print("Invalid option. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
 # GUN_MODEL related functions
 def gunmodel_exist(gmm, gmmt):
-    query = f"select ModelType from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+    query = f"select ModelType from GUN_MODEL where Manufacturer='{gmm}';"
     cur.execute(query)
     con.commit()
     rows = cur.fetchall()
@@ -1007,8 +1265,8 @@ while(1):
     clear()
 #    username = input("Username: ")
 #    password = input("Password: ")
-    username = "anirudh"
-    password = "746058"
+    username = "enikhil12"
+    password = "21lihkine"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -1028,7 +1286,7 @@ while(1):
             cur = con.cursor()
             while ( 1 ):
                 clear()
-                print("\n\n\t\tWELCOME TO THE GUN STORE!\n\n")
+                print("\n\n\t\tWELCOME TO THE GUN STORE DATABASE!\n\n")
                 print(' \n\
  ,________________________________       \n\
 |__________,----------._ [____]  ""-,__  __...-----==="\n\
