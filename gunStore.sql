@@ -32,7 +32,10 @@ create table EMPLOYEE (
 	constraint Employee2 foreign key (ManagerID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into EMPLOYEE values ('9876543210', 'Nigga', 'Gay', 'Employeet', '2001-02-18', '3', 'M', '42069', NULL, '1');
+insert into EMPLOYEE values ('0000000001', 'Tanmay', '', 'Sachan', '2000-03-23', '3', 'M', '10000', NULL, '1');
+insert into EMPLOYEE values ('0000000005', 'Akshat', '', 'Gahoi', '1999-08-12', '3', 'M', '30000', NULL, '1');
+insert into EMPLOYEE values ('0000000002', 'Anirudh', '', 'Palutla', '2000-08-10', '5', 'M', '20000', NULL, '2');
+insert into EMPLOYEE values ('0000000004', 'Nikhil', 'E', 'Rao', '2000-03-23', '7', 'M', '10000', NULL, '3');
 
 
 create table EMPLOYEE_CONTACTNOS (
@@ -42,8 +45,9 @@ create table EMPLOYEE_CONTACTNOS (
 	constraint EmployeeContactNos1 foreign key (EmployeeID) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 );
 
-insert into EMPLOYEE_CONTACTNOS values ('9876543210', '2122122121');
-insert into EMPLOYEE_CONTACTNOS values ('9876543210', '2122122122');
+insert into EMPLOYEE_CONTACTNOS values ('0000000001', '1893749183');
+insert into EMPLOYEE_CONTACTNOS values ('0000000002', '1479183749');
+insert into EMPLOYEE_CONTACTNOS values ('0000000005', '8410989810');
 
 create table CUSTOMER (
 	CustomerID char(10) not null,
@@ -56,9 +60,9 @@ create table CUSTOMER (
 	constraint Customer1 foreign key (VerifiedBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into CUSTOMER values ('1234567890', 'Anirudh', 'Narayan', 'Palutla', '0', '9876543210');
-insert into CUSTOMER (CustomerID, Fname, Lname, TotalPurchaseValue, VerifiedBy) values ('2222222222', 'Nikhil', 'E', '69', '9876543210');
-insert into CUSTOMER (CustomerID, Fname, Lname, TotalPurchaseValue, VerifiedBy) values ('3333333333', 'Tanmay', 'Sachan', '420', '9876543210');
+insert into CUSTOMER values ('0000000001', 'Shivansh', 'Tiwari', 'Seth', '10', '0000000001');
+insert into CUSTOMER (CustomerID, Fname, Lname, TotalPurchaseValue, VerifiedBy) values ('0000000002', 'Istasis', 'Mishra', '70', '0000000005');
+insert into CUSTOMER (CustomerID, Fname, Lname, TotalPurchaseValue, VerifiedBy) values ('0000000003', 'Risubh', 'Jain', '420', '0000000004');
 
 create table CUSTOMER_CONTACTNOS (
 	CustomerID char(10) not null,
@@ -67,11 +71,9 @@ create table CUSTOMER_CONTACTNOS (
 	constraint CustomerContactNos1 foreign key (CustomerID) references CUSTOMER (CustomerID) on delete cascade on update cascade
 );
 
-insert into CUSTOMER_CONTACTNOS values ('1234567890', '1111111112');
-insert into CUSTOMER_CONTACTNOS values ('1234567890', '2111111112');
-insert into CUSTOMER_CONTACTNOS values ('2222222222', '2222222122');
-insert into CUSTOMER_CONTACTNOS values ('2222222222', '3333322333');
-
+insert into CUSTOMER_CONTACTNOS values ('0000000001', '1934810938');
+insert into CUSTOMER_CONTACTNOS values ('0000000002', '1924810938');
+insert into CUSTOMER_CONTACTNOS values ('0000000003', '8597698475');
 
 create table DEPENDANT (
 	DependsOn char(10) not null,
@@ -83,7 +85,9 @@ create table DEPENDANT (
 	constraint Dependant1 foreign key (DependsOn) references EMPLOYEE (EmployeeID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into DEPENDANT values ('9876543210', 'Fag', NULL, 'Yeet', '6969696969');
+insert into DEPENDANT values ('0000000001', 'Akshat', NULL, 'Chhajer', '1984909818');
+insert into DEPENDANT values ('0000000002', 'Manas', NULL, 'Kabre', '1984909838');
+insert into DEPENDANT values ('0000000001', 'Shourja', NULL, 'Mukherjee', '4738295723');
 
 
 create table STORE_CONTACTNOS (
@@ -105,8 +109,10 @@ create table MANUFACTURER (
 	constraint ManufacturerKey primary key (NameID)
 ) engine=InnoDB default charset=latin1;
 
-insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001');
-
+insert into MANUFACTURER values ('McDonalds', 'USA', '1970');
+insert into MANUFACTURER values ('KFC', 'Germany', '1950');
+insert into MANUFACTURER values ('Amul', 'India', '1992');
+insert into MANUFACTURER values ('Subway', 'India', '1974');
 
 create table FACTORY (
 	ManufacturerName char(40) not null,
@@ -115,9 +121,12 @@ create table FACTORY (
 	constraint Factory1 foreign key (ManufacturerName) references MANUFACTURER (NameID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into FACTORY values ('JihadTime', 'Karachi');
-insert into FACTORY values ('JihadTime', 'Hyderabad');
-
+insert into FACTORY values ('Amul', 'Faridabad');
+insert into FACTORY values ('Amul', 'Jhansi');
+insert into FACTORY values ('McDonalds', 'Florida');
+insert into FACTORY values ('KFC', 'Karachi');
+insert into FACTORY values ('Subway', 'Hyderabad');
+insert into FACTORY values ('McDonalds', 'Hyderabad');
 
 create table FACTORY_CONTACTNOS (
 	FactoryManufacturerName char(40) not null,
@@ -127,8 +136,8 @@ create table FACTORY_CONTACTNOS (
 	constraint FactoryContactNos1 foreign key (FactoryManufacturerName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into FACTORY_CONTACTNOS values ('JihadTime', 'Karachi', '1111111111');
-insert into FACTORY_CONTACTNOS values ('JihadTime', 'Karachi', '6666666666');
+insert into FACTORY_CONTACTNOS values ('Amul', 'Faridabad', '1394803198');
+insert into FACTORY_CONTACTNOS values ('Subway', 'Hyderabad', '6969696969');
 
 create table AMMO (
 	CartridgeName char(40) not null, 
@@ -140,6 +149,9 @@ create table AMMO (
 ) engine=InnoDB default charset=latin1;
 
 insert into AMMO values ('TulAmmo 223 Rem', 'FMJ', '1000', '.223', '132074');
+insert into AMMO values ('Tanmay ammo', 'TSM', '1000', '.223', '151839');
+insert into AMMO values ('Anirudh ammo', 'ANP', '1000', '.211', '153058');
+insert into AMMO values ('Nikhil ammo', 'NER', '1000', '.235', '589850');
 
 create table GUN_MODEL (
 	Manufacturer char(40) not null,
@@ -151,6 +163,8 @@ create table GUN_MODEL (
 ) engine=InnoDB default charset=latin1;
 
 insert into GUN_MODEL values ('Kalashnikov', 'KR-9', '96359', '1000', 'Black');
+insert into GUN_MODEL values ('AWP', 'AM-10', '1000000', '20', 'Pit Viper');
+insert into GUN_MODEL values ('Glock', '18', '200', '500', 'Water Elemental');
 
 create table ATTACHMENT (
 	Manufacturer char(40) not null,
@@ -161,6 +175,8 @@ create table ATTACHMENT (
 ) engine=InnoDB default charset=latin1;
 
 insert into ATTACHMENT values ('COAST', 'HP-7', '2640', 'Flashlight');
+insert into ATTACHMENT values ('ammunation', 'DK-9', '100', 'Grip');
+insert into ATTACHMENT values ('Amul', 'DC-10', '10000', 'Scope');
 
 create table SUPPLIED_BY (
 	StoreNo int not null,
@@ -207,6 +223,8 @@ create table GRIP (
 	constraint Grip1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
+insert into GRIP values ('ammunation', 'DK-9', '10', 'Leather');
+
 create table FLASHLIGHT (
 	Manufacturer char(40) not null,
 	ModelType char(40) not null, 
@@ -214,6 +232,8 @@ create table FLASHLIGHT (
 	constraint FlashlightKey primary key (Manufacturer, ModelType),
 	constraint Flashlight1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
+
+insert into FLASHLIGHT values ('COAST', 'HP-7', '1000');
 
 create table SCOPE (
 	Manufacturer char(40) not null,
@@ -223,6 +243,8 @@ create table SCOPE (
 	constraint ScopeKey primary key (Manufacturer, ModelType),
 	constraint Scope1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
+
+insert into SCOPE values ('Amul', 'DC-10', 'ACOG', '2');
 
 create table LASER (
 	Manufacturer char(40) not null,
