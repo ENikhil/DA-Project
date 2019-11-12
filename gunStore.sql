@@ -188,3 +188,12 @@ create table SOLD (
 	constraint Gun_FK foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
 	constraint Attachment_FK foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
+
+
+create table BARREL (
+	Manufacturer char(40) not null,
+	ModelType char(40) not null, 
+	BarrelLength float not null,
+	constraint AttachmentKey primary key (Manufacturer, ModelType),
+	constraint foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
+) engine=InnoDB default charset=latin1;
