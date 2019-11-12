@@ -833,42 +833,6 @@ def gunmodel_add():
         input("Press ENTER to continue>")
     return
 
-# AMMO related functions
-def ammo_exist(aid):
-    query = f"select * from AMMO where CartridgeName='{aid}';"
-    cur.execute(query)
-    con.commit()
-    rows = cur.fetchall()
-    if(len(rows) == 0):
-        raise Exception(f"Cartridge name {aid} does not exist in database. Please enter a valid cartridge name")
-    return
-
-def ammo_add():
-    try:
-        ammo = {}
-        clear()
-        while ( 1 ):
-            print("The allowed cartridge names are non null strings shorter than 40 characters")
-            ammo["cartridgename"] = input("Cartridge Name: ")
-            if 0 < len(ammo["cartridgename"]) < 40:
-                break
-            else:
-                print("Invalid cartridge name. Please try again.")
-        ammo["shape"] = input("Shape: ")
-        ammo["noofrounds"] = input("No Of Rounds: ")
-        ammo["caliber"] = input("Caliber: ")
-        ammo["cost"] = input("Cost: ")
-        query = f"insert into AMMO values ('{ammo['cartridgename']}', '{ammo['shape']}', '{ammo['noofrounds']}', '{ammo['caliber']}', '{ammo['cost']}');"
-        cur.execute(query)
-        con.commit()
-        print("Inserted into database")
-    except Exception as e:
-        con.rollback()
-        print("Failed to insert")
-        print(">>>", e)
-        input("Press ENTER to continue>")
-    return
-
 def gunmodel_update():
     try:
         clear()
@@ -924,7 +888,78 @@ def gunmodel_update():
         print(">>>", e)
         input("Press ENTER to continue>")
     return
-  
+
+def gunmodel_delete():
+    try:
+        clear()
+        gmm = input("Manufacturer of the gun model you want to delete: ")
+        gmmt = input("Type of the gun model you want to delete: ")
+        gunmodel_exist(gmm, gmmt)
+        query = f"delete from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_gunmodel():
+    while ( 1 ):
+        clear()
+        print("1. Add a new gun model")
+        print("2. Update existing gun model information")
+        print("3. Delete a gun model")
+        print("4. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            gunmodel_add()
+        elif ch == 2:
+            gunmodel_update()
+        elif ch == 3:
+            gunmodel_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+# AMMO related functions
+def ammo_exist(aid):
+    query = f"select * from AMMO where CartridgeName='{aid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if(len(rows) == 0):
+        raise Exception(f"Cartridge name {aid} does not exist in database. Please enter a valid cartridge name")
+    return
+
+def ammo_add():
+    try:
+        ammo = {}
+        clear()
+        while ( 1 ):
+            print("The allowed cartridge names are non null strings shorter than 40 characters")
+            ammo["cartridgename"] = input("Cartridge Name: ")
+            if 0 < len(ammo["cartridgename"]) < 40:
+                break
+            else:
+                print("Invalid cartridge name. Please try again.")
+        ammo["shape"] = input("Shape: ")
+        ammo["noofrounds"] = input("No Of Rounds: ")
+        ammo["caliber"] = input("Caliber: ")
+        ammo["cost"] = input("Cost: ")
+        query = f"insert into AMMO values ('{ammo['cartridgename']}', '{ammo['shape']}', '{ammo['noofrounds']}', '{ammo['caliber']}', '{ammo['cost']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
 
 def ammo_update():
     try:
@@ -996,22 +1031,6 @@ def ammo_update():
         input("Press ENTER to continue>")
     return
 
-
-def gunmodel_delete():
-    try:
-        clear()
-        gmm = input("Manufacturer of the gun model you want to delete: ")
-        gmmt = input("Type of the gun model you want to delete: ")
-        gunmodel_exist(gmm, gmmt)
-        query = f"delete from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
-        cur.execute(query)
-        con.commit()
-    except Exception as e:
-        con.rollback()
-        print("Failed to delete")
-        print(">>>", e)
-        input("Press ENTER to continue>")
-
 def ammo_delete():
     try:
         clear()
@@ -1026,27 +1045,6 @@ def ammo_delete():
         print(">>>", e)
         input("Press ENTER to continue>")
 
-
-def choice_gunmodel():
-    while ( 1 ):
-        clear()
-        print("1. Add a new gun model")
-        print("2. Update existing gun model information")
-        print("3. Delete a gun model")
-        print("4. Go back")
-        ch = int(input("Your choice> "))
-        if ch == 1:
-            gunmodel_add()
-        elif ch == 2:
-            gunmodel_update()
-        elif ch == 3:
-            gunmodel_delete()
-        elif ch == 4:
-            break
-        else:
-            print("Invalid choice. Please try again")
-            input("Press ENTER to continue>")
-    return
 
 def choice_ammo():
     while(1):
