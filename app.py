@@ -1386,50 +1386,129 @@ def scope_add(mn, mdt):
         print(">>>", e)
     return
 
+
+# Report related functions
+def choice_reports():
+    while ( 1 ):
+        clear()
+        print("What report would you like?")
+        print("1. Attachments and Ammo that fit Gun Model")
+        print("2. Customers verified by Employee")
+        print("3. Items sold at store")
+        print("6. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            report1()
+        if ch == 2:
+            report2()
+        else:
+            break
+    return 
+
+def report1():
+    '''Report of attachments and ammo that fit gun model.'''
+    clear()
+    gm = input("Gun Manufacturer: ")
+    gmt = input("Gun Model Type: ")
+    gunmodel_exist(gm, gmt)
+    query = f"select Attachment_Manufacturer, Attachment_ModelType from FITS_ATTACHMENT where Gun_Manufacturer='{gm}' \
+            and Gun_ModelType='{gmt}';"
+    cur.execute(query)
+    con.commit()
+    rows_att = cur.fetchall()
+    query = f"select CartridgeName from FITS_AMMO where Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}';"
+    cur.execute(query)
+    con.commit()
+    rows_ammo = cur.fetchall()
+
+    print(f"The Attachments that fit {gm} {gmt} are:")
+    print("|{:34}|{:34}|".format("\033[1mAttachment Manufacturer", "Attachment Model\033[0m"))
+    for i in range(61):
+        print("-", end='')
+    print("")
+    for row in rows_att:
+        print("|{:30}|{:30}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+
+    print(f"\n\nThe Ammo products that fit {gm} {gmt} are:")
+    print("|{:34}|".format("\033[1mCartridge Name\033[0m"))
+    for i in range(61):
+        print("-", end='')
+    print("")
+    for row in rows_ammo:
+        print("|{:30}|".format(row["CartridgeName"]))
+    input("\n\nPress ENTER to continue")
+
+    return
+
+def report2():
+    '''Report of customers verified by a particular employee'''
+    clear()
+    eid = input("Employee ID: ")
+    employee_exist(eid)
+    query = f"select * from CUSTOMER where VerifiedBy='{eid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    print(f"These are the customers verified by {eid}:\n\n")
+    print("|{:15}|{:25}|{:25}|{:25}|".format("Customer ID", "First Name", "Middle Name", "Last Name"))
+    for i in range(95):
+        print("-", end='')
+    print("")
+    for row in rows:
+        print("|{:15}|{:25}|{:25}|{:25}|".format(row["CustomerID"], row["Fname"], row["Mname"], row["Lname"]))
+    input("\n\nPress ENTER to continue")
+    return
+
+
+
 ##################################################################################
 
 # Overall functions
 def choices (us):
-    print("Which information would you like to access today?")
-    if us in [1]:
-        print("1. Stores")
-    if us in [1, 3]:
-        print("2. Employees")
-    if us in [1, 3]:
-        print("3. Customers")
-    if us in [1, 2]:
-        print("4. Manufacturers")
-    if us in [1, 2]:
-        print("5. Attachments")
-    if us in [1, 2]:
-        print("6. Ammo")
-    if us in [1, 2]:
-        print("7. Gun Models")
-    print("8. Reports")
-    print("10. Logout")
-    ch = int(input("Your choice> "))
+    while ( 1 ):
+        clear()
+        print("Which information would you like to access today?")
+        if us in [1]:
+            print("1. Stores")
+        if us in [1, 3]:
+            print("2. Employees")
+        if us in [1, 3]:
+            print("3. Customers")
+        if us in [1, 2]:
+            print("4. Manufacturers")
+        if us in [1, 2]:
+            print("5. Attachments")
+        if us in [1, 2]:
+            print("6. Ammo")
+        if us in [1, 2]:
+            print("7. Gun Models")
+        print("8. Reports")
+        print("10. Logout")
+        ch = int(input("Your choice> "))
 
-    if ch == 1 and (us in [1]):
-        choice_store()
-    elif ch == 2 and (us in [1, 3]):
-        choice_employee()
-    elif ch == 3 and (us in [1, 3]):
-        choice_customer()
-    elif ch == 4 and (us in [1, 2]):
-        choice_manufacturer()
-    elif ch == 5 and (us in [1, 2]):
-        choice_attachment()
-    elif ch == 6 and (us in [1, 2]):
-        choice_ammo()
-    elif ch == 7 and (us in [1, 2]):
-        choice_gunmodel()
-    elif ch == 10:
-        print("Goodbye!")
-        input("Enter any key to CONTINUE>")
-        return ch
-    else:
-        print("Invalid input. Please try again.")
-        input("Enter any key to CONTINUE>")
+        if ch == 1 and (us in [1]):
+            choice_store()
+        elif ch == 2 and (us in [1, 3]):
+            choice_employee()
+        elif ch == 3 and (us in [1, 3]):
+            choice_customer()
+        elif ch == 4 and (us in [1, 2]):
+            choice_manufacturer()
+        elif ch == 5 and (us in [1, 2]):
+            choice_attachment()
+        elif ch == 6 and (us in [1, 2]):
+            choice_ammo()
+        elif ch == 7 and (us in [1, 2]):
+            choice_gunmodel()
+        elif ch == 8:
+            choice_reports()
+        elif ch == 10:
+            print("Goodbye!")
+            input("Enter any key to CONTINUE>")
+            return ch
+        else:
+            print("Invalid input. Please try again.")
+            input("Enter any key to CONTINUE>")
     return ch
 
 def welcome_message (us):
@@ -1459,10 +1538,10 @@ def clear():
 # Main code 
 while(1):
     clear()
-    username = input("SQL Username: ")
-    password = input("SQL Password: ")
-#    username = "anirudh"
-#    password = "746058"
+#    username = input("SQL Username: ")
+#    password = input("SQL Password: ")
+    username = "anirudh"
+    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -1485,33 +1564,37 @@ while(1):
                 print("Please enter your Gun Store Login details.")
                 user = input("Username: ")
                 pasw = input("Password: ")
+                us = 0
+                if user == 'admin' and pasw == 'admin':
+                    us = 1
+                if user == 'inv_manager' and pasw == 'invvv':
+                    us = 2
+                if user == 'hr_manager' and pasw == 'hrrr':
+                    us = 3
 
                 while ( 1 ):
                     # ADMIN VIEW
-                    if user == 'admin' and pasw == 'admin':
+                    if us == 1:
                         clear()
-                        us = 1
                         welcome_message(us)
-                        ch = choices(us)
-                        if ch == 10:
+                        st = choices(us)
+                        if st == 10:
                             break
 
                     # INVENTORY MANAGER VIEW
-                    if user == 'inv_manager' and pasw == 'invvv':
+                    if us == 2:
                         clear()
-                        us = 2
                         welcome_message(us)
-                        ch = choices(us)
-                        if ch == 10:
+                        st = choices(us)
+                        if st == 10:
                             break
 
                     # HR MANAGER VIEW
-                    if user == 'hr_manager' and pasw == 'hrrr':
+                    if us == 3:
                         clear()
-                        us = 3
                         welcome_message(us)
-                        ch = choices(us)
-                        if ch == 10:
+                        st = choices(us)
+                        if st == 10:
                             break
                     else:
                         print("Invalid username and password combination")
