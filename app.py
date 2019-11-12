@@ -86,7 +86,8 @@ def choice_store ():
         print("1. Add a new store")
         print("2. Update existing store information")
         print("3. Delete a store")
-        print("4. Cancel")
+        print("4. Manage contact numbers")
+        print("5. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -95,10 +96,68 @@ def choice_store ():
         elif ch == 3:
             store_delete()
         elif ch == 4:
+            store_contactnos()
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
     return
+
+def store_contactnos ():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new contact number")
+        print("2. Delete existing contact number")
+        print("3. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 3:
+            break
+        elif ch == 1:
+            store_contactnos_add()
+        elif ch == 2:
+            store_contactnos_delete()
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER key to continue>")
+    return
+
+def store_contactnos_add():
+    try:
+        print("Please enter the required details.")
+        sn = input("Store number: ")
+        store_exist(sn)
+        cn = input("Contact number: ")
+        query = f"insert into STORE_CONTACTNOS values ('{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
+def store_contactnos_delete():
+    try:
+        print("Please enter the required details.")
+        sn = input("Store number: ")
+        store_exist(sn)
+        cn = input("Contact number: ")
+        cur.execute(f"select * from STORE_CONTACTNOS where StoreNo='{sn}' and ContactNo='{cn}';")
+        con.commit()
+        rows = cur.fetchall()
+        if (len(rows) == 0):
+            raise Exception("This entry does not exist.")
+        else:
+            query = f"delete from STORE_CONTACTNOS where StoreNo='{sn}' and ContactNo='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+    return
+
 
 
 # EMPLOYEE related functions
