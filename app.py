@@ -2,48 +2,6 @@ import subprocess as sp
 import pymysql
 import pymysql.cursors
 
-def hireAnEmployee():
-    try:
-        # Takes emplyee details as input
-        row = {}
-        print("Enter new employee's details: ")
-        name = (input("Name (Fname Minit Lname): ")).split(' ')
-        row["Fname"] = name[0]
-        row["Minit"] = name[1]
-        row["Lname"] = name[2]
-        row["Ssn"] = input("SSN: ")
-        row["Bdate"] = input("Birth Date (YYYY-MM-DD): ")
-        row["Address"] = input("Address: ")
-        row["Sex"] = input("Sex: ")
-        row["Salary"] = float(input("Salary: "))
-        row["Dno"] = int(input("Dno: "))
-
-        """
-        In addition to taking input, you are required to handle domain errors as well
-
-        For example: the SSN should be only 9 characters long
-        Sex should be only M or F
-
-        If you choose to take Super_SSN, you need to make sure the foreign key constraint is satisfied
-
-        HINT: Instead of handling all these errors yourself, you can make use of except clause to print the error returned to you by MySQL
-        """
-
-        query = "INSERT INTO EMPLOYEE(Fname, Minit, Lname, Ssn, Bdate, Address, Sex, Salary, Dno) VALUES('%s', '%c', '%s', '%s', '%s', '%s', '%c', %f, %d)" %(row["Fname"], row["Minit"], row["Lname"], row["Ssn"], row["Bdate"], row["Address"], row["Sex"], row["Salary"], row["Dno"])
-
-        print(query)
-        cur.execute(query)
-        con.commit()
-
-        print("Inserted Into Database")
-
-    except Exception as e:
-        con.rollback()
-        print("Failed to insert into database")
-        print (">>>>>>>>>>>>>", e)
-        
-    return
-
 # STORE related functions
 def store_exist(sn):
     query = f"select * from STORE where StoreNo={sn};"
@@ -142,9 +100,164 @@ def choice_store ():
             print("Invalid choice. Please try again")
     return
 
+
+# EMPLOYEE related functions
+def employee_exist(eid):
+    query = f"select * from EMPLOYEE where EmployeeID={eid};"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Employee ID {eid} does not exist in database. Please enter a valid employee number")
+    return
+
+
+def employee_add():
+    try:
+        employee = {}
+        clear()
+        while ( 1 ):
+            print("The allowed employee numbers are integers greater than 0")
+            employee["id"] = input("Employee ID (10-digit code consisting of characters): ")
+            if len(employee["id"]) == 10:
+                break
+            else:
+                print("Invalid Employee ID. Please try again.")
+        employee["fname"] = input("First name: ")
+        employee["mname"] = input("Middle name: ")
+        employee["lname"] = input("Last name: ")
+        employee["dob"] = input("Date of birth (YYYY-MM-DD format): ")
+        employee["years_worked"] = 2019 - int(employee["dob"].split("-")[0])
+        while ( 1 ):
+            employee["sex"] = input("Sex (M, F, or O): ")
+            if employee["sex"] != "M" and employee["sex"] != "F" and employee["sex"] != "O":
+                print("Invalid sex. Please enter again.")
+            else:
+                break
+        employee["sal"] = input("Salary: ")
+        employee["mid"] = input("Manager ID (has to already exist in EMPLOYEE): ")
+        employee["wat"] = input("Works at (store number): ")
+        query = f"insert into EMPLOYEE values ('{employee['id']}', '{employee['fname']}', '{employee['mname']}', \
+                '{employee['lname']}', '{employee['dob']}', '{employee['years_worked']}', '{employee['sex']}', \
+                '{employee['sal']}', '{employee['mid']}', '{employee['wat']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def employee_update():
+    try:
+        clear()
+        eid = int(input("Employee ID of the employee you want to edit: "))
+        employee_exist(eid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Employee ID")
+            print("2. First Name")
+            print("3. Middle Name")
+            print("4. Last Name")
+            print("5. Date of Birth")
+            print("6. Sex")
+            print("7. Salary")
+            print("8. Manager ID")
+            print("9. Works at (Store Number)")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Employee ID: ")
+                    if len(inp) == 10:
+                        break
+                    else:
+                        print("Invalid Employee ID. Please try again.")
+                query = f"update EMPLOYEE set EmployeeID='{inp}' where EmployeeID='{eid}';"
+            elif ops == 2:
+                inp = input("Updated first name: ")
+                query = f"update EMPLOYEE set Fname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 3:
+                inp = input("Updated middle name: ")
+                query = f"update EMPLOYEE set Mname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 4:
+                inp = input("Updated last name: ")
+                query = f"update EMPLOYEE set Lname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 5:
+                inp = input("Updated DoB: ")
+                query = f"update EMPLOYEE set DoB='{inp}' where EmployeeID='{eid}';"
+            elif ops == 6:
+                inp = input("Updated Sex: ")
+                query = f"update EMPLOYEE set Sex='{inp}' where EmployeeID='{eid}';"
+            elif ops == 7:
+                inp = input("Updated salary: ")
+                query = f"update EMPLOYEE set Salary='{inp}' where EmployeeID='{eid}';"
+            elif ops == 8:
+                inp = input("Updated Manager ID: ")
+                query = f"update EMPLOYEE set ManagerID='{inp}' where EmployeeID='{eid}';"
+            elif ops == 9:
+                inp = input("Updated works at store no: ")
+                query = f"update EMPLOYEE set WorksAt='{inp}' where EmployeeID='{eid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def employee_delete():
+    try:
+        clear()
+        eid = int(input("Employee ID of employee you want to delete: "))
+        employee_exist(eid)
+        query = f"delete from EMPLOYEE where EmployeeID={eid};"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_employee ():
+    while ( 1 ):
+        clear()
+        print("1. Add a new employee")
+        print("2. Update existing employee information")
+        print("3. Delete an employee")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            employee_add()
+        elif ch == 2:
+            employee_update()
+        elif ch == 3:
+            employee_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+
+# Overall functions
 def choices (ch):
     if ch == 1:
         choice_store()
+    elif ch == 2:
+        choice_employee()
     else:
         print("Invalid input. Please try again.")
     return
@@ -157,8 +270,10 @@ def clear():
 # Global
 while(1):
     clear()
-    username = input("Username: ")
-    password = input("Password: ")
+#    username = input("Username: ")
+#    password = input("Password: ")
+    username = "anirudh"
+    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -166,7 +281,7 @@ while(1):
                 password=password,
                 db='GUN_STORE',
                 cursorclass=pymysql.cursors.DictCursor)
-        sp.call('clear', shell=True)
+        clear()
 
         if(con.open):
             print("Connected")
@@ -194,8 +309,7 @@ while(1):
                     input("Enter any key to CONTINUE>")
 
     except:
-        sp.call('clear',shell=True)
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
-        input("Enter any key to CONTINUE>")
+        input("Press ENTER to continue>")
         exit(0)
     
