@@ -471,6 +471,146 @@ def customer_update():
         input("Press ENTER to continue>")
     return
 
+# AMMO related functions
+def ammo_exist(aid):
+    query = f"select * from AMMO where CartridgeName='{aid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if(len(rows) == 0):
+        raise Exception(f"Cartridge name {aid} does not exist in database. Please enter a valid cartridge name")
+    return
+
+def ammo_add():
+    try:
+        ammo = {}
+        clear()
+        while ( 1 ):
+            printf("The allowed cartridge names are non null strings shorter than 40 characters")
+            ammo["cartridgename"] = input("Cartridge Name: ")
+            if 0 < len(ammo["cartridgename"]) < 40:
+                break
+            else:
+                print("Invalid cartridge name. Please try again.")
+        ammo["shape"] = input("Shape: ")
+        ammo["noofrounds"] = input("No Of Rounds: ")
+        ammo["caliber"] = input("Caliber: ")
+        ammo["cost"] = input("Cost: ")
+        query = f"insert into AMMO values ('{ammo['cartridgename']}', '{ammo['shape']}', '{ammo['noofrounds']}', '{ammo['caliber']}', '{ammo['cost']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def ammo_update():
+    try:
+        clear()
+        cartridgename = input("Name of the cartridge you want to edit: ")
+        ammmo_exist(cartridgename)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Cartridge Name")
+            print("2. Shape")
+            print("3. No Of Rounds")
+            print("4. Caliber")
+            print("5. Cost")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Cartridge Name: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid cartridge name. Please try again.")
+                query = f"update AMMO set CartridgeName='{inp}' where CartridgeName='{cartridgename}';"
+            elif ops == 2:
+                while(1):
+                    inp = input("Updated Shape: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid shape. Please Try again.")
+                query = f"update AMMO set Shape='{inp}' where CartridgeName='{cartridgename}'"
+            elif ops == 3:
+                while ( 1 ):
+                    inp = input("Updated No Of Rounds: ")
+                    if inp.isnumeric():
+                        break
+                    else:
+                        print("Invalid No of Rounds. Please Try again.")
+                query = f"update AMMO set NoOfRounds='{inp}' where CartridgeName='{cartridgename}'"
+            elif ops == 4:
+                while(1):
+                    inp = input("Updated Caliber: ")
+                    if 0 < len(inp) < 10:
+                        break
+                    else:
+                        print("Invalid Caliber. Please try again.")
+                query = f"update AMMO set Caliber='{inp}' where CartridgeName='{cartridgename}'"
+            elif ops == 5:
+                while(1):
+                    inp = input("Updated Cost: ")
+                    if inp.isnumeric():
+                        break
+                    else:
+                        print("Invalid Cost. Please Try again.")
+                query = f"update AMMO set Cost='{inp}' where CartridgeName='{cartridgename}'"
+            else:
+                print("Invalid input")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def ammo_delete():
+    try:
+        clear()
+        cartridgename = input("Name of the cartridge you want to delete: ")
+        ammo_exist(cartridgename)
+        query = f"delete from AMMO where CartridgeName='{cartridgename}'"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_ammo():
+    while(1):
+        clear()
+        print("1. Add a new cartridge")
+        print("2. Update existing ammo information")
+        print("3. Delete a cartridge")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            ammo_add()
+        elif ch == 2:
+            ammo_update()
+        elif ch == 3:
+            ammo_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
 
 # Overall functions
 def choices (ch):
