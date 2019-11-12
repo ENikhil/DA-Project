@@ -89,7 +89,9 @@ def choice_store ():
         print("4. Manage contact numbers")
         print("5. Add items sold at store")
         print("6. Delete items sold at store")
-        print("7. Cancel")
+        print("7. Add supplier factory to the store")
+        print("8. Delete supplier factory from the store")
+        print("9. Go Back")        
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -104,11 +106,55 @@ def choice_store ():
         elif ch == 6:
             sold_at_delete()
         elif ch == 7:
+            supplied_by_add()
+        elif ch == 8:
+            supplied_by_delete()
+        elif ch == 9:
             break
         else:
             print("Invalid choice. Please try again")
     return
 
+def supplied_by_add():
+    try:
+        clear()
+        sn = int(input("Enter store number: "))
+        store_exist(sn) 
+        mn = input("Enter name of supplying manufacturer: ")
+        lid = input("Enter location of supplying factory: ")
+        query = f"insert into SUPPLIED_BY values ('{sn}', '{mn}', '{lid}');"
+        cur.execute(query)
+        con.commit()       
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert supply source")
+        print(">>>", e)
+    return
+
+def supplied_by_delete():
+    try:
+        clear()
+        sn = int(input("Enter store number: "))
+        store_exist(sn)
+        mn = input("Enter name of supplying manufacturer: ")
+        lid = input("Enter location of supplying factory: ")
+        factory_exist(mn, lid)
+        existquery = f"select * from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and LocationID='{lid}';"
+        cur.execute(existquery)
+        con.commit()
+        rows = cur.fetchall()
+        if len(rows) > 0 :
+            query = f"delete from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and LocationID='{lid}';"
+        else:
+            raise Exception(f"Factory {mn} at {lid} supplying store number {sn} does not exist. Please try again.")
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete supply source")
+        print(">>>", e)
+    return
+            
 def sold_at_add():
     try:
         clear()
