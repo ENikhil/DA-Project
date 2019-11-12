@@ -396,7 +396,7 @@ def dependant_exist(eid, fn, mn, ln):
     if len(rows) > 0:
         return
     else:
-        raise Exception(f"Gun with Manufacturer {gmm} and Model Type {gmmt} does not exist in the database. Please try again.")
+        raise Exception(f"Dependant named {fn} {mn} {ln} who depends on Employee with ID {eid} does not exist in the database. Please try again.")
     return
 
 def dependant():
@@ -422,7 +422,7 @@ def dependant_add():
     try:
         print("Please enter the required details.")
         eid = int(input("Employee ID: "))
-        employee_exist(sn)
+        employee_exist(eid)
         fn = input("First name: ")
         mn = input("Middle name: ")
         ln = input("Last name: ")
@@ -853,16 +853,13 @@ def choice_customer():
         print("What would you like to do?")
         print("1. Add new customer")
         print("2. Update existing customer information")
-        print("3. Manage contact numbers")
-        print("4. Go back")
+        print("3. Go back")
         ops = int(input("Your choice> "))
         if ops == 1:
             customer_add()
         elif ops == 2:
             customer_update()
         elif ops == 3:
-            customer_contactnos()
-        elif ops == 4:
             break
         else:
             print("Invalid option. Please try again.")
