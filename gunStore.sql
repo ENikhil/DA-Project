@@ -101,11 +101,11 @@ insert into STORE_CONTACTNOS values ('2', '1262232232');
 create table MANUFACTURER (
 	NameID char(40) not null,
 	Country char(75) not null,
-	YearEst date not null,
+	YearEst int not null,
 	constraint ManufacturerKey primary key (NameID)
 ) engine=InnoDB default charset=latin1;
 
-insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001-09-11');
+insert into MANUFACTURER values ('JihadTime', 'Pakistan', '2001');
 
 
 create table FACTORY (

@@ -253,7 +253,7 @@ def choice_employee ():
 
 # MANUFACTURER related functions
 def manufacturer_exist(mnid):
-    query = f"select * from MANUFACTURER where NameID={mnid};"
+    query = f"select * from MANUFACTURER where NameID='{mnid}';"
     cur.execute(query)
     con.commit()
     rows = cur.fetchall()
@@ -289,7 +289,7 @@ def manufacturer_add():
 def manufacturer_update():
     try:
         clear()
-        mnid = int(input("Name of the manufacturer you want to edit: "))
+        mnid = input("Name of the manufacturer you want to edit: ")
         manufacturer_exist(mnid)
         while ( 1 ):
             clear()
@@ -306,13 +306,18 @@ def manufacturer_update():
                         break
                     else:
                         print("Invalid Manufacturer Name. Please try again.")
-                query = f"update MANUFACTURER set NameID='{inp}' where NameID='{eid}';"
+                query = f"update MANUFACTURER set NameID='{inp}' where NameID='{mnid}';"
             elif ops == 2:
                 inp = input("Updated country: ")
-                query = f"update MANUFACTURER set Country='{inp}' where NameID='{eid}';"
+                query = f"update MANUFACTURER set Country='{inp}' where NameID='{mnid}';"
             elif ops == 3:
-                inp = input("Updated year established: ")
-                query = f"update MANUFACTURER set YearEst='{inp}' where NameID='{eid}';"
+                while ( 1 ):
+                    inp = input("Updated year established: ")
+                    if 0 < int(inp) <= 2020:
+                        break
+                    else:
+                        print("Invalid input. Please enter a valid year.")
+                query = f"update MANUFACTURER set YearEst='{inp}' where NameID='{mnid}';"
             else:
                 print("Invalid input. Please try again")
                 input("Press ENTER to continue>")
@@ -331,9 +336,9 @@ def manufacturer_update():
 def manufacturer_delete():
     try:
         clear()
-        mnid = int(input("Name of the manufacturer you want to delete: "))
+        mnid = input("Name of the manufacturer you want to delete: ")
         manufacturer_exist(mnid)
-        query = f"delete from MANUFACTURER where NameID={mnid};"
+        query = f"delete from MANUFACTURER where NameID='{mnid}';"
         cur.execute(query)
         con.commit()
     except Exception as e:
@@ -369,6 +374,8 @@ def choices (ch):
         choice_store()
     elif ch == 2:
         choice_employee()
+    elif ch == 4:
+        choice_manufacturer()
     else:
         print("Invalid input. Please try again.")
     return
