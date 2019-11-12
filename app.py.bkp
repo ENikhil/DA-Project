@@ -54,7 +54,7 @@ def store_update():
                 query = f"update STORE set StoreNo={inp} where StoreNo={store['no']};"
             elif ops == 2:
                 inp = input("Updated location: ")
-                query = f"update STORE set Location='{inp}' where StoreNo={store['no']};"
+                query = f"update STORE set LocationID='{inp}' where StoreNo={store['no']};"
             else:
                 print("Invalid input. Please try again")
                 continue
@@ -100,9 +100,385 @@ def choice_store ():
             print("Invalid choice. Please try again")
     return
 
+
+# EMPLOYEE related functions
+def employee_exist(eid):
+    query = f"select * from EMPLOYEE where EmployeeID={eid};"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Employee ID {eid} does not exist in database. Please enter a valid employee number")
+    return
+
+
+def employee_add():
+    try:
+        employee = {}
+        clear()
+        while ( 1 ):
+            print("The allowed employee numbers are integers greater than 0")
+            employee["id"] = input("Employee ID (10-digit code consisting of characters): ")
+            if len(employee["id"]) == 10:
+                break
+            else:
+                print("Invalid Employee ID. Please try again.")
+        employee["fname"] = input("First name: ")
+        employee["mname"] = input("Middle name: ")
+        employee["lname"] = input("Last name: ")
+        employee["dob"] = input("Date of birth (YYYY-MM-DD format): ")
+        employee["years_worked"] = 2019 - int(employee["dob"].split("-")[0])
+        while ( 1 ):
+            employee["sex"] = input("Sex (M, F, or O): ")
+            if employee["sex"] != "M" and employee["sex"] != "F" and employee["sex"] != "O":
+                print("Invalid sex. Please enter again.")
+            else:
+                break
+        employee["sal"] = input("Salary: ")
+        employee["mid"] = input("Manager ID (has to already exist in EMPLOYEE): ")
+        employee["wat"] = input("Works at (store number): ")
+        query = f"insert into EMPLOYEE values ('{employee['id']}', '{employee['fname']}', '{employee['mname']}', \
+                '{employee['lname']}', '{employee['dob']}', '{employee['years_worked']}', '{employee['sex']}', \
+                '{employee['sal']}', '{employee['mid']}', '{employee['wat']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def employee_update():
+    try:
+        clear()
+        eid = int(input("Employee ID of the employee you want to edit: "))
+        employee_exist(eid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Employee ID")
+            print("2. First Name")
+            print("3. Middle Name")
+            print("4. Last Name")
+            print("5. Date of Birth")
+            print("6. Sex")
+            print("7. Salary")
+            print("8. Manager ID")
+            print("9. Works at (Store Number)")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Employee ID: ")
+                    if len(inp) == 10:
+                        break
+                    else:
+                        print("Invalid Employee ID. Please try again.")
+                query = f"update EMPLOYEE set EmployeeID='{inp}' where EmployeeID='{eid}';"
+            elif ops == 2:
+                inp = input("Updated first name: ")
+                query = f"update EMPLOYEE set Fname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 3:
+                inp = input("Updated middle name: ")
+                query = f"update EMPLOYEE set Mname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 4:
+                inp = input("Updated last name: ")
+                query = f"update EMPLOYEE set Lname='{inp}' where EmployeeID='{eid}';"
+            elif ops == 5:
+                inp = input("Updated DoB: ")
+                query = f"update EMPLOYEE set DoB='{inp}' where EmployeeID='{eid}';"
+            elif ops == 6:
+                inp = input("Updated Sex: ")
+                query = f"update EMPLOYEE set Sex='{inp}' where EmployeeID='{eid}';"
+            elif ops == 7:
+                inp = input("Updated salary: ")
+                query = f"update EMPLOYEE set Salary='{inp}' where EmployeeID='{eid}';"
+            elif ops == 8:
+                inp = input("Updated Manager ID: ")
+                query = f"update EMPLOYEE set ManagerID='{inp}' where EmployeeID='{eid}';"
+            elif ops == 9:
+                inp = input("Updated works at store no: ")
+                query = f"update EMPLOYEE set WorksAt='{inp}' where EmployeeID='{eid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def employee_delete():
+    try:
+        clear()
+        eid = int(input("Employee ID of employee you want to delete: "))
+        employee_exist(eid)
+        query = f"delete from EMPLOYEE where EmployeeID={eid};"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_employee ():
+    while ( 1 ):
+        clear()
+        print("1. Add a new employee")
+        print("2. Update existing employee information")
+        print("3. Delete an employee")
+        print("4. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            employee_add()
+        elif ch == 2:
+            employee_update()
+        elif ch == 3:
+            employee_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+
+# MANUFACTURER related functions
+def manufacturer_exist(mnid):
+    query = f"select * from MANUFACTURER where NameID='{mnid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Manufacturer name {mnid} does not exist in database. Please enter a valid manufacturer name")
+    return
+
+# CUSTOMER related functions
+def customer_exist(cid):
+    query = f"select * from CUSTOMER where CustomerID='{cid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Customer ID {cid} does not exist in database. Please enter a valid customer ID.")
+    return
+
+
+def manufacturer_add():
+    try:
+        manufacturer = {}
+        clear()
+        while ( 1 ):
+            print("The allowed manufacturer names are non null strings shorter than 40 characters")
+            manufacturer["nameid"] = input("Manufacturer Name: ")
+            if 0 < len(manufacturer["nameid"]) < 40 :
+                break
+            else:
+                print("Invalid Manufacturer name. Please try again.")
+        manufacturer["country"] = input("Country: ")
+        manufacturer["yearest"] = input("Year established: ")
+        query = f"insert into MANUFACTURER values ('{manufacturer['nameid']}', '{manufacturer['country']}', '{manufacturer['yearest']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+        raise Exception(f"Customer with ID {cid} does not exist in the database")
+    return
+
+def choice_customer():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new customer")
+        print("2. Update existing customer information")
+        print("3. Go back")
+        ops = int(input("Your choice> "))
+        if ops == 1:
+            customer_add()
+        elif ops == 2:
+            customer_update()
+        elif ops == 3:
+            break
+        else:
+            print("Invalid option. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
+def customer_add():
+    try:
+        customer = {}
+        print("Please enter the customer's information")
+        while ( 1 ):
+            customer["id"] = input("Customer ID (10-digit code consisting of characters): ")
+            if len(customer["id"]) == 10:
+                break
+            else:
+                print("Invalid Customer ID. Please enter again.")
+        customer["fname"] = input("First name: ")
+        mn = input("Does customer have a middle name (y for yes)?: ")
+        if mn == 'y':
+            customer["mname"] = input("Middle name: ")
+        else:
+            customer["mname"] = "NULL"
+        customer["lname"] = input("Last name: ")
+        customer["tpv"] = int(input("Total purchase value: "))
+        customer["vfb"] = input("ID of Employee that verified the customer (has to exist in EMPLOYEE already):  ")
+        query = f"insert into CUSTOMER values ('{customer['id']}', '{customer['fname']}', '{customer['mname']}', \
+                '{customer['lname']}', '{customer['tpv']}', '{customer['vfb']}'); "
+        print("Query = ", query)
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def manufacturer_update():
+    try:
+        clear()
+        mnid = input("Name of the manufacturer you want to edit: ")
+        manufacturer_exist(mnid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Manufacturer Name")
+            print("2. Country")
+            print("3. Year Established")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Manufacturer Name: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Manufacturer Name. Please try again.")
+                query = f"update MANUFACTURER set NameID='{inp}' where NameID='{mnid}';"
+            elif ops == 2:
+                inp = input("Updated country: ")
+                query = f"update MANUFACTURER set Country='{inp}' where NameID='{mnid}';"
+            elif ops == 3:
+                while ( 1 ):
+                    inp = input("Updated year established: ")
+                    if 0 < int(inp) <= 2020:
+                        break
+                    else:
+                        print("Invalid input. Please enter a valid year.")
+                query = f"update MANUFACTURER set YearEst='{inp}' where NameID='{mnid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+
+def customer_update():
+    try:
+        clear()
+        cid = int(input("Customer ID of the customer you want to edit: "))
+        customer_exist(cid)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. First Name")
+            print("2. Middle Name")
+            print("3. Last Name")
+            print("4. Total Purchase Value")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                inp = input("Updated first name: ")
+                query = f"update CUSTOMER set Fname='{inp}' where CustomerID='{cid}';"
+            elif ops == 2:
+                inp = input("Updated middle name: ")
+                query = f"update CUSTOMER set Mname='{inp}' where CustomerID='{cid}';"
+            elif ops == 3:
+                inp = input("Updated last name: ")
+                query = f"update CUSTOMER set Lname='{inp}' where CustomerID='{cid}';"
+            elif ops == 4:
+                inp = input("Updated total purchase value: ")
+                query = f"update CUSTOMER set TotalPurchaseValue='{inp}' where CustomerID='{cid}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+
+def manufacturer_delete():
+    try:
+        clear()
+        mnid = input("Name of the manufacturer you want to delete: ")
+        manufacturer_exist(mnid)
+        query = f"delete from MANUFACTURER where NameID='{mnid}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_manufacturer():
+    while ( 1 ):
+        clear()
+        print("1. Add a new manufacturer")
+        print("2. Update existing manufacturer information")
+        print("3. Delete an manufacturer")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            manufacturer_add()
+        elif ch == 2:
+            manufacturer_update()
+        elif ch == 3:
+            manufacturer_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+
+# Overall functions
 def choices (ch):
     if ch == 1:
         choice_store()
+    elif ch == 2:
+        choice_employee()
+    elif ch == 3:
+        choice_customer()
+    elif ch == 4:
+        choice_manufacturer()
     else:
         print("Invalid input. Please try again.")
     return
@@ -115,8 +491,10 @@ def clear():
 # Global
 while(1):
     clear()
-    username = input("Username: ")
-    password = input("Password: ")
+#    username = input("Username: ")
+#    password = input("Password: ")
+    username = "anirudh"
+    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -152,8 +530,7 @@ while(1):
                     input("Enter any key to CONTINUE>")
 
     except:
-        clear()
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
-        input("Enter any key to CONTINUE>")
+        input("Press ENTER to continue>")
         exit(0)
     

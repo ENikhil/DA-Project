@@ -262,17 +262,6 @@ def manufacturer_exist(mnid):
         raise Exception(f"Manufacturer name {mnid} does not exist in database. Please enter a valid manufacturer name")
     return
 
-# CUSTOMER related functions
-def customer_exist(cid):
-    query = f"select * from CUSTOMER where CustomerID='{cid}';"
-    cur.execute(query)
-    con.commit()
-    rows = cur.fetchall()
-    if (len(rows) == 0):
-        raise Exception(f"Customer ID {cid} does not exist in database. Please enter a valid customer ID.")
-    return
-
-
 def manufacturer_add():
     try:
         manufacturer = {}
@@ -290,55 +279,9 @@ def manufacturer_add():
         cur.execute(query)
         con.commit()
         print("Inserted into database")
-        raise Exception(f"Customer with ID {cid} does not exist in the database")
-    return
-
-def choice_customer():
-    while ( 1 ):
-        clear()
-        print("What would you like to do?")
-        print("1. Add new customer")
-        print("2. Update existing customer information")
-        print("3. Go back")
-        ops = int(input("Your choice> "))
-        if ops == 1:
-            customer_add()
-        elif ops == 2:
-            customer_update()
-        elif ops == 3:
-            break
-        else:
-            print("Invalid option. Please try again.")
-            input("Press ENTER to continue>")
-    return
-
-def customer_add():
-    try:
-        customer = {}
-        print("Please enter the customer's information")
-        while ( 1 ):
-            customer["id"] = input("Customer ID (10-digit code consisting of characters): ")
-            if len(customer["id"]) == 10:
-                break
-            else:
-                print("Invalid Customer ID. Please enter again.")
-        customer["fname"] = input("First name: ")
-        mn = input("Does customer have a middle name (y for yes)?: ")
-        if mn == 'y':
-            customer["mname"] = input("Middle name: ")
-        else:
-            customer["mname"] = "NULL"
-        customer["lname"] = input("Last name: ")
-        customer["tpv"] = int(input("Total purchase value: "))
-        customer["vfb"] = input("ID of Employee that verified the customer (has to exist in EMPLOYEE already):  ")
-        query = f"insert into CUSTOMER values ('{customer['id']}', '{customer['fname']}', '{customer['mname']}', \
-                '{customer['lname']}', '{customer['tpv']}', '{customer['vfb']}'); "
-        print("Query = ", query)
-        cur.execute(query)
-        con.commit()
     except Exception as e:
         con.rollback()
-        print("Failed to insert")
+        print("Failed to update")
         print(">>>", e)
         input("Press ENTER to continue>")
     return
@@ -391,6 +334,102 @@ def manufacturer_update():
     return
 
 
+def manufacturer_delete():
+    try:
+        clear()
+        mnid = input("Name of the manufacturer you want to delete: ")
+        manufacturer_exist(mnid)
+        query = f"delete from MANUFACTURER where NameID='{mnid}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_manufacturer():
+    while ( 1 ):
+        clear()
+        print("1. Add a new manufacturer")
+        print("2. Update existing manufacturer information")
+        print("3. Delete an manufacturer")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            manufacturer_add()
+        elif ch == 2:
+            manufacturer_update()
+        elif ch == 3:
+            manufacturer_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
+    return
+
+
+# CUSTOMER related functions
+def customer_exist(cid):
+    query = f"select * from CUSTOMER where CustomerID='{cid}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if (len(rows) == 0):
+        raise Exception(f"Customer ID {cid} does not exist in database. Please enter a valid customer ID.")
+    return
+
+def choice_customer():
+    while ( 1 ):
+        clear()
+        print("What would you like to do?")
+        print("1. Add new customer")
+        print("2. Update existing customer information")
+        print("3. Go back")
+        ops = int(input("Your choice> "))
+        if ops == 1:
+            customer_add()
+        elif ops == 2:
+            customer_update()
+        elif ops == 3:
+            break
+        else:
+            print("Invalid option. Please try again.")
+            input("Press ENTER to continue>")
+    return
+
+def customer_add():
+    try:
+        customer = {}
+        print("Please enter the customer's information")
+        while ( 1 ):
+            customer["id"] = input("Customer ID (10-digit code consisting of characters): ")
+            if len(customer["id"]) == 10:
+                break
+            else:
+                print("Invalid Customer ID. Please enter again.")
+        customer["fname"] = input("First name: ")
+        mn = input("Does customer have a middle name (y for yes)?: ")
+        if mn == 'y':
+            customer["mname"] = input("Middle name: ")
+        else:
+            customer["mname"] = "NULL"
+        customer["lname"] = input("Last name: ")
+        customer["tpv"] = int(input("Total purchase value: "))
+        customer["vfb"] = input("ID of Employee that verified the customer (has to exist in EMPLOYEE already):  ")
+        query = f"insert into CUSTOMER values ('{customer['id']}', '{customer['fname']}', '{customer['mname']}', \
+                '{customer['lname']}', '{customer['tpv']}', '{customer['vfb']}'); "
+        print("Query = ", query)
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
 def customer_update():
     try:
         clear()
@@ -430,42 +469,6 @@ def customer_update():
         print("Failed to update")
         print(">>>", e)
         input("Press ENTER to continue>")
-    return
-
-
-def manufacturer_delete():
-    try:
-        clear()
-        mnid = input("Name of the manufacturer you want to delete: ")
-        manufacturer_exist(mnid)
-        query = f"delete from MANUFACTURER where NameID='{mnid}';"
-        cur.execute(query)
-        con.commit()
-    except Exception as e:
-        con.rollback()
-        print("Failed to delete")
-        print(">>>", e)
-        input("Press ENTER to continue>")
-
-def choice_manufacturer():
-    while ( 1 ):
-        clear()
-        print("1. Add a new manufacturer")
-        print("2. Update existing manufacturer information")
-        print("3. Delete an manufacturer")
-        print("4. Cancel")
-        ch = int(input("Your choice> "))
-        if ch == 1:
-            manufacturer_add()
-        elif ch == 2:
-            manufacturer_update()
-        elif ch == 3:
-            manufacturer_delete()
-        elif ch == 4:
-            break
-        else:
-            print("Invalid choice. Please try again")
-            input("Press ENTER to continue>")
     return
 
 
