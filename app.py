@@ -880,7 +880,16 @@ while(1):
             cur = con.cursor()
             while ( 1 ):
                 clear()
-                print("Which information would you like to access?")
+                print("\n\n\t\tWELCOME TO THE GUN STORE!\n\n")
+                print(' \n\
+ ,________________________________       \n\
+|__________,----------._ [____]  ""-,__  __...-----==="\n\
+        (_(||||||||||||)___________/   ""             |\n\
+           `-----------\'        [ ))"-,               |\n\
+                                ""    `,  _,--...___  |\n\
+                                        `/          """"\n\
+                                        \n\n')
+                print("Which information would you like to access today?")
                 print("1. Stores")
                 print("2. Employees")
                 print("3. Customers")
