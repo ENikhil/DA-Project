@@ -187,6 +187,10 @@ create table SUPPLIED_BY (
 	constraint SuppliedBy2 foreign key (FactoryName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into SUPPLIED_BY values ('1', 'Amul', 'Faridabad');
+insert into SUPPLIED_BY values ('2', 'Amul', 'Jhansi');
+insert into SUPPLIED_BY values ('1', 'McDonalds', 'Florida');
+
 create table SOLD (
 	SoldTo char(10) not null,
 	SoldBy char(10) not null,
@@ -275,6 +279,9 @@ create table FITS_ATTACHMENT (
 	constraint Fits12 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into FITS_ATTACHMENT values ('Glock', '18', 'Amul', 'DC-10');
+insert into FITS_ATTACHMENT values ('Kalashnikov', 'KR-9', 'ammunation', 'DK-9');
+
 create table FITS_AMMO (
 	Gun_Manufacturer char(40) not null,
 	Gun_ModelType char(40) not null,
@@ -284,6 +291,8 @@ create table FITS_AMMO (
 	constraint Fits22 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into FITS_AMMO values ('Glock', '18', 'Tanmay ammo');
+insert into FITS_AMMO values ('Kalashnikov', 'KR-9', 'Anirudh ammo');
 
 create table SOLD_AT_GUNMODEL (
 	StoreNo int not null,
@@ -294,6 +303,8 @@ create table SOLD_AT_GUNMODEL (
 	constraint SoldAt12 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into SOLD_AT_GUNMODEL values ('1', 'AWP', 'AM-10');
+insert into SOLD_AT_GUNMODEL values ('2', 'Kalashnikov', 'KR-9');
 
 create table SOLD_AT_ATTACHMENT (
 	StoreNo int not null,
@@ -304,6 +315,8 @@ create table SOLD_AT_ATTACHMENT (
 	constraint SoldAt22 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into SOLD_AT_ATTACHMENT values ('1', 'Amul', 'DC-10');
+insert into SOLD_AT_ATTACHMENT values ('2', 'ammunation', 'DK-9');
 
 create table SOLD_AT_AMMO (
 	StoreNo int not null,
@@ -312,3 +325,6 @@ create table SOLD_AT_AMMO (
 	constraint SoldAt31 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
 	constraint SoldAt32 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
+
+insert into SOLD_AT_AMMO values ('1', 'BIG');
+insert into SOLD_AT_AMMO values ('2', 'SMALL');
