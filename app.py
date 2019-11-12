@@ -353,7 +353,7 @@ def choice_manufacturer():
         clear()
         print("1. Add a new manufacturer")
         print("2. Update existing manufacturer information")
-        print("3. Delete an manufacturer")
+        print("3. Delete a manufacturer")
         print("4. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
@@ -469,6 +469,142 @@ def customer_update():
         print("Failed to update")
         print(">>>", e)
         input("Press ENTER to continue>")
+    return
+
+# GUN_MODEL related functions
+def gunmodel_exist(gmm, gmmt):
+    query = f"select ModelType from GUN_MODEL where Manufacturer='{gm}';"
+    cur.execute(query)
+    con.commit()
+    rows = cur.fetchall()
+    if gmmt in rows['ModelType']:
+        return
+    else:
+        raise Exception(f"Gun with Manufacturer {gmm} and Model Type {gmmt} does not exist in the database. Please try again.")
+    return
+
+def gunmodel_add():
+    try:
+        gunmodel = {}
+        clear()
+        while ( 1 ):
+            print("The allowed gun manufacturer names are non null strings shorter than 40 characters")
+            gunmodel["manid"] = input("Gun Manufacturer Name: ")
+            if 0 < len(gunmodel["manid"]) < 40 :
+                break
+            else:
+                print("Invalid Gun Manufacturer name. Please try again.")
+        while ( 1 ):
+            print("The allowed gun model types are non null strings shorter than 40 characters")
+            gunmodel["typeid"] = input("Gun Model Type: ")
+            if 0 < len(gunmodel["typeid"]) < 40 :
+                break
+            else:
+                print("Invalid Gun Model type. Please try again.")
+        gunmodel["cost"] = input("Cost: ")
+        gunmodel["firerate"] = input("Firerate: ")
+        gunmodel["colour"] = input("Colour: ")
+        query = f"insert into GUN_MODEL values ('{gunmodel['manid']}', '{gunmodel['typeid']}', '{gunmodel['cost']}', '{gunmodel['firerate']}', '{gunmodel['colour']}');"
+        cur.execute(query)
+        con.commit()
+        print("Inserted into database")
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def gunmodel_update():
+    try:
+        clear()
+        gmm = input("Manufacturer of the gun model you want to edit: ")
+        gmmt = input("Type of the gun model you want to edit: ")
+        gunmodel_exist(gmm, gmmt)
+        while ( 1 ):
+            clear()
+            print("What attribute do you want to edit?")
+            print("1. Manufacturer Name")
+            print("2. Model Type")
+            print("3. Cost")
+            print("4. Firerate")
+            print("5. Colour")
+            ops = int(input("Your choice> "))
+            query = ""
+            if ops == 1:
+                while ( 1 ):
+                    inp = input("Updated Gun Manufacturer Name: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Gun Manufacturer Name. Please try again.")
+                query = f"update GUN_MODEL set Manufacturer='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 2:
+                while ( 1 ):
+                    inp = input("Updated Gun Model Type: ")
+                    if 0 < len(inp) < 40:
+                        break
+                    else:
+                        print("Invalid Gun Model Type. Please try again.")
+                query = f"update GUN_MODEL set ModelType='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 3:
+                inp = input("Updated cost: ")
+                query = f"update GUN_MODEL set Cost='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            elif ops == 4:
+                inp = input("Updated firerate: ")
+                query = f"update GUN_MODEL set Firerate='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"    
+            elif ops == 5:
+                inp = input("Updated colour: ")
+                query = f"update GUN_MODEL set Colour='{inp}' where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+            else:
+                print("Invalid input. Please try again")
+                input("Press ENTER to continue>")
+                continue
+            print(query)
+            cur.execute(query)
+            con.commit()
+            break
+    except Exception as e:
+        con.rollback()
+        print("Failed to update")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def gunmodel_delete():
+    try:
+        clear()
+        gmm = input("Manufacturer of the gun model you want to delete: ")
+        gmmt = input("Type of the gun model you want to delete: ")
+        gunmodel_exist(gmm, gmmt)
+        query = f"delete from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+
+def choice_gunmodel():
+    while ( 1 ):
+        clear()
+        print("1. Add a new gun model")
+        print("2. Update existing gun model information")
+        print("3. Delete a gun model")
+        print("4. Cancel")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            gunmodel_add()
+        elif ch == 2:
+            gunmodel_update()
+        elif ch == 3:
+            gunmodel_delete()
+        elif ch == 4:
+            break
+        else:
+            print("Invalid choice. Please try again")
+            input("Press ENTER to continue>")
     return
 
 
