@@ -123,9 +123,9 @@ def choice_store ():
 def sold_add():
     try:
         clear()
-        cid = int(input("Enter Customer ID: "))
+        cid = input("Enter Customer ID: ")
         customer_exist(cid)
-        eid = int(input("Enter Employee ID: "))
+        eid = input("Enter Employee ID: ")
         employee_exist(eid)
         sn = int(input("Enter store number: "))
         store_exist(sn)
@@ -156,14 +156,15 @@ def sold_add():
         con.rollback()
         print("Failed to insert item at store")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def sold_delete():
     try:
         clear()
-        cid = int(input("Enter Customer ID: "))
+        cid = input("Enter Customer ID: ")
         customer_exist(cid)
-        eid = int(input("Enter Employee ID: "))
+        eid = input("Enter Employee ID: ")
         employee_exist(eid)
         sn = int(input("Enter store number: "))
         store_exist(sn)
@@ -197,6 +198,7 @@ def sold_delete():
         con.rollback()
         print("Failed to delete item at store")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def supplied_by_add():
@@ -213,6 +215,7 @@ def supplied_by_add():
         con.rollback()
         print("Failed to insert supply source")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def supplied_by_delete():
@@ -223,12 +226,12 @@ def supplied_by_delete():
         mn = input("Enter name of supplying manufacturer: ")
         lid = input("Enter location of supplying factory: ")
         factory_exist(mn, lid)
-        existquery = f"select * from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and LocationID='{lid}';"
+        existquery = f"select * from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and FactoryLocationID='{lid}';"
         cur.execute(existquery)
         con.commit()
         rows = cur.fetchall()
         if len(rows) > 0 :
-            query = f"delete from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and LocationID='{lid}';"
+            query = f"delete from SUPPLIED_BY where StoreNo='{sn}' and FactoryName='{mn}' and FactoryLocationID='{lid}';"
         else:
             raise Exception(f"Factory {mn} at {lid} supplying store number {sn} does not exist. Please try again.")
         cur.execute(query)
@@ -237,6 +240,7 @@ def supplied_by_delete():
         con.rollback()
         print("Failed to delete supply source")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def sold_at_add():
@@ -816,6 +820,7 @@ def factory_add():
         con.rollback()
         print("Failed to update")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def factory_delete():
@@ -824,19 +829,20 @@ def factory_delete():
         sn = input("Manufacturer Name: ")
         manufacturer_exist(sn)
         cn = input("Location: ")
-        cur.execute(f"select * from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';")
+        cur.execute(f"select * from FACTORY where FactoryName='{sn}' and LocationID='{cn}';")
         con.commit()
         rows = cur.fetchall()
         if (len(rows) == 0):
             raise Exception("This entry does not exist.")
         else:
-            query = f"delete from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';"
+            query = f"delete from FACTORY where FactoryName='{sn}' and LocationID='{cn}';"
             cur.execute(query)
             con.commit()
     except Exception as e:
         con.rollback()
         print("Failed to update")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
  
 def factory_contactnos ():
