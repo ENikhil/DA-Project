@@ -326,5 +326,5 @@ create table SOLD_AT_AMMO (
 	constraint SoldAt32 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-insert into SOLD_AT_AMMO values ('1', 'BIG');
-insert into SOLD_AT_AMMO values ('2', 'SMALL');
+insert into SOLD_AT_AMMO values ('1', 'Anirudh ammo');
+insert into SOLD_AT_AMMO values ('2', 'Nikhil ammo');
