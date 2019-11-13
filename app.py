@@ -619,7 +619,8 @@ def choice_manufacturer():
         print("1. Add a new manufacturer")
         print("2. Update existing manufacturer information")
         print("3. Delete a manufacturer")
-        print("4. Cancel")
+        print("4. Manage factories")
+        print("5. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
             manufacturer_add()
@@ -628,6 +629,8 @@ def choice_manufacturer():
         elif ch == 3:
             manufacturer_delete()
         elif ch == 4:
+            choice_factory()
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
@@ -646,7 +649,7 @@ def factory_exist(mn, lid):
         raise Exception(f"Factory belonging to manufacturer {mn} in {lid} does not exist in the database. Please try again.")
     return
 
-def factory():
+def choice_factory():
     while ( 1 ):
         clear()
         print("What would you like to do?")
@@ -735,7 +738,7 @@ def factory_contactnos_add():
         con.commit()
     except Exception as e:
         con.rollback()
-        print("Failed to update")
+        print("Failed to add contact no")
         print(">>>", e)
     return
 
@@ -757,7 +760,7 @@ def factory_contactnos_delete():
             con.commit()
     except Exception as e:
         con.rollback()
-        print("Failed to update")
+        print("Failed to delete contact no")
         print(">>>", e)
     return
 
