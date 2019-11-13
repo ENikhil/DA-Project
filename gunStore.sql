@@ -171,24 +171,43 @@ create table SUPPLIED_BY (
 	constraint SuppliedBy2 foreign key (FactoryName, FactoryLocationID) references FACTORY (ManufacturerName, LocationID) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
-create table SOLD (
+create table SOLD_GUNMODEL (
 	SoldTo char(10) not null,
 	SoldBy char(10) not null,
 	StoreNo int not null,
-	Ammo char(40),
-	Gun_Manufacturer char(40),
-	Gun_ModelType char(40),
-	Attachment_Manufacturer char(40),
-	Attachment_ModelType char(40),
-	constraint SoldKey primary key (SoldTo, SoldBy, StoreNo, Ammo, Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType),
-	constraint SoldKey1 foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
-	constraint SoldKey2 foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
-	constraint SoldKey3 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
-	constraint SoldKey4 foreign key (Ammo) references AMMO (CartridgeName) on delete cascade on update cascade,
-	constraint SoldKey5 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint SoldKey6 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
+	Gun_Manufacturer char(40) not null,
+	Gun_ModelType char(40) not null,
+	constraint SoldKey1 primary key (SoldTo, SoldBy, StoreNo, Gun_Manufacturer, Gun_ModelType),
+	constraint SoldKey11 foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
+	constraint SoldKey12 foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
+	constraint SoldKey13 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldKey14 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+create table SOLD_AMMO (
+	SoldTo char(10) not null,
+	SoldBy char(10) not null,
+	StoreNo int not null,
+	Ammo char(40) not null,
+	constraint SoldKey2 primary key (SoldTo, SoldBy, StoreNo, Ammo),
+	constraint SoldKey21 foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
+	constraint SoldKey22 foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
+	constraint SoldKey23 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldKey24 foreign key (Ammo) references AMMO (CartridgeName) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
+
+create table SOLD_ATTACHMENT (
+	SoldTo char(10) not null,
+	SoldBy char(10) not null,
+	StoreNo int not null,
+	Attachment_Manufacturer char(40),
+	Attachment_ModelType char(40),
+	constraint SoldKey primary key (SoldTo, SoldBy, StoreNo, Attachment_Manufacturer, Attachment_ModelType),
+	constraint SoldKey31 foreign key (SoldTo) references CUSTOMER (CustomerID) on delete cascade on update cascade,
+	constraint SoldKey32 foreign key (SoldBy) references EMPLOYEE (EmployeeID) on delete cascade on update cascade,
+	constraint SoldKey33 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldKey34 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
 
 create table BARREL (
 	Manufacturer char(40) not null,
