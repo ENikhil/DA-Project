@@ -578,7 +578,10 @@ def choice_employee ():
         print("2. Update existing employee information")
         print("3. Delete an employee")
         print("4. Manage contact numbers")
-        print("5. Go back")
+        print("5. Manage dependants")
+        print("6. View employees")
+        print("7. View dependents")
+        print("8. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             employee_add()
@@ -589,6 +592,12 @@ def choice_employee ():
         elif ch == 4:
             employee_contactnos()
         elif ch == 5:
+            choice_dependant()
+        elif ch == 6:
+            display_table("EMPLOYEE")
+        elif ch == 7:
+            display_table("DEPENDANT")
+        elif ch == 8:
             break
         else:
             print("Invalid choice. Please try again")
@@ -596,18 +605,18 @@ def choice_employee ():
     return
 
 #DEPENDANT related functions
-def dependant_exist(eid, fn, mn, ln):
-    query = f"select * from DEPENDANT where DependsOn='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';"
+def dependant_exist(eid, fn, ln):
+    query = f"select * from DEPENDANT where DependsOn='{eid}' and Fname='{fn}' and Lname='{ln}';"
     cur.execute(query)
     con.commit()
     rows = cur.fetchall()
     if len(rows) > 0:
         return
     else:
-        raise Exception(f"Dependant named {fn} {mn} {ln} who depends on Employee with ID {eid} does not exist in the database. Please try again.")
+        raise Exception(f"Dependant named {fn} {ln} who depends on Employee with ID {eid} does not exist in the database. Please try again.")
     return
 
-def dependant():
+def choice_dependant():
     while ( 1 ):
         clear()
         print("What would you like to do?")
@@ -629,19 +638,20 @@ def dependant():
 def dependant_add():
     try:
         print("Please enter the required details.")
-        eid = int(input("Employee ID: "))
+        eid = input("Employee ID: ")
         employee_exist(eid)
         fn = input("First name: ")
         mn = input("Middle name: ")
         ln = input("Last name: ")
         cn = input("Contact number: ")
-        query = f"insert into DEPENDANT values ('{eid}', '{fn}', '{mn}', '{ln}', {cn}');"
+        query = f"insert into DEPENDANT values ('{eid}', '{fn}', '{mn}', '{ln}', '{cn}');"
         cur.execute(query)
         con.commit()
     except Exception as e:
         con.rollback()
         print("Failed to update")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 def dependant_delete():
@@ -649,23 +659,22 @@ def dependant_delete():
         print("Please enter the required details.")
         eid = input("Employee ID: ")
         fn = input("First name: ")
-        mn = input("Middle name: ")
         ln = input("Last name: ")
-        dependant_exist(eid, fn, mn, ln)
-        cn = input("Contact number: ")
-        cur.execute(f"select * from DEPENDANT where EmployeeID='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';")
+        dependant_exist(eid, fn, ln)
+        cur.execute(f"select * from DEPENDANT where DependsOn='{eid}' and Fname='{fn}' and Lname='{ln}';")
         con.commit()
         rows = cur.fetchall()
         if (len(rows) == 0):
             raise Exception("This entry does not exist.")
         else:
-            query = f"delete from DEPENDANT where EmployeeID='{eid}' and Fname='{fn}' and Mname='{mn}' and Lname='{ln}';"
+            query = f"delete from DEPENDANT where DependsOn='{eid}' and Fname='{fn}' and Lname='{ln}';"
             cur.execute(query)
             con.commit()
     except Exception as e:
         con.rollback()
         print("Failed to update")
         print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 
@@ -828,7 +837,8 @@ def choice_manufacturer():
         print("2. Update existing manufacturer information")
         print("3. Delete a manufacturer")
         print("4. Manage factories")
-        print("5. Cancel")
+        print("5. View manufacturers")
+        print("6. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             manufacturer_add()
@@ -839,6 +849,8 @@ def choice_manufacturer():
         elif ch == 4:
             choice_factory()
         elif ch == 5:
+            display_table("MANUFACTURER")
+        elif ch == 6:
             break
         else:
             print("Invalid choice. Please try again")
@@ -864,7 +876,9 @@ def choice_factory():
         print("1. Add new factory")
         print("2. Delete existing factory")
         print("3. Manage contact numbers")
-        print("4. Go back")
+        print("4. View factories")
+        print("5. View facotry contact numbers")
+        print("6. Go back")
         ch = int(input("Your choice> "))
         if ch == 4:
             break
@@ -874,6 +888,12 @@ def choice_factory():
             factory_delete()
         elif ch == 3:
             factory_contactnos()
+        elif ch == 4:
+            display_table("FACTORY")
+        elif ch == 5:
+            display_table("FACTORY_CONTACTNOS")
+        elif ch == 6:
+            break
         else:
             print("Invalid input. Please enter a valid option.")
             input("Press ENTER key to continue>")
@@ -1063,13 +1083,16 @@ def choice_customer():
         print("What would you like to do?")
         print("1. Add new customer")
         print("2. Update existing customer information")
-        print("3. Go back")
+        print("3. View customers")
+        print("4. Go back")
         ops = int(input("Your choice> "))
         if ops == 1:
             customer_add()
         elif ops == 2:
             customer_update()
         elif ops == 3:
+            display_table("CUSTOMER")
+        elif ops == 4:
             break
         else:
             print("Invalid option. Please try again.")
@@ -1199,7 +1222,8 @@ def choice_gunmodel():
         print("3. Delete a gun model")
         print("4. Add an ammo type/attachment that fits a gun model")
         print("5. Delete an ammo type/attachment that fits a gun model")
-        print("6. Go back")
+        print("6. View gun models")
+        print("7. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             gunmodel_add()
@@ -1212,6 +1236,8 @@ def choice_gunmodel():
         elif ch == 5:
             gunmodel_fits_delete()
         elif ch == 6:
+            display_table("GUN_MODEL")
+        elif ch == 7:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1414,7 +1440,8 @@ def choice_ammo():
         print("1. Add a new cartridge")
         print("2. Update existing ammo information")
         print("3. Delete a cartridge")
-        print("4. Go back")
+        print("4. View ammo types")
+        print("5. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             ammo_add()
@@ -1423,6 +1450,8 @@ def choice_ammo():
         elif ch == 3:
             ammo_delete()
         elif ch == 4:
+            display_table("AMMO")
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1448,15 +1477,55 @@ def choice_attachment():
         clear()
         print("What would you like to do?\n" +
                 "1. Add a new attachment\n" +
-                "2. Go back")
+                "2. View attachments\n" +
+                "3. Go back")
         ch = int(input("Your choice> "))
-        if ch == 2:
+        if ch == 3:
             break
         elif ch == 1:
             attachment_add()
+        elif ch == 2:
+            view_attachment()
         else:
             print("Invalid choice. Please try again.")
             input("Press ENTER to continue>")
+    return
+
+def view_attachment():
+    while ( 1 ):
+        clear()
+        print("What attachment would you like to view?")
+        print("1. All")
+        print("2. Barrel")
+        print("3. Flashlight")
+        print("4. Grip")
+        print("5. Laser")
+        print("6. Magazine")
+        print("7. Scope")
+        print("8. Go back")
+        ch = int(input("Your choice> "))
+
+        if ch == 1:
+            display_table("ATTACHMENT")
+        elif ch == 2:
+            display_table("BARREL")
+        elif ch == 3:
+            display_table("FLASHLIGHT")
+        elif ch == 4:
+            display_table("GRIP")
+        elif ch == 5:
+            display_table("LASER")
+        elif ch == 6:
+            display_table("MAGAZINE")
+        elif ch == 7:
+            display_table("SCOPE")
+        elif ch == 8:
+            break
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER to continue>")
+            continue
+        break
     return
 
 def attachment_add():
@@ -1833,6 +1902,9 @@ while(1):
             while ( 1 ):
                 clear()
                 print("Please enter your Gun Store Login details.")
+                print("\nFor admin, use 'admin', 'admin'")
+                print("For inventory manager, use 'inv_manager', 'invvv'")
+                print("For HR manager, use 'hr_manager', 'hrrr'\n")
                 user = input("Username: ")
                 pasw = input("Password: ")
                 us = 0
