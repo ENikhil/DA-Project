@@ -1,6 +1,7 @@
 import subprocess as sp
 import pymysql
 import pymysql.cursors
+from tabulate import tabulate
 
 # STORE related functions
 def store_exist(sn):
@@ -1342,7 +1343,8 @@ def choice_ammo():
         print("1. Add a new cartridge")
         print("2. Update existing ammo information")
         print("3. Delete a cartridge")
-        print("4. Go back")
+        print("4. Display all types of ammo")
+        print("5. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             ammo_add()
@@ -1351,6 +1353,8 @@ def choice_ammo():
         elif ch == 3:
             ammo_delete()
         elif ch == 4:
+            display("AMMO")
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1522,6 +1526,28 @@ def scope_add(mn, mdt):
         print(">>>", e)
     return
 
+def display(table):
+    clear()
+    query1 = f"select * from {table};"
+    cur.execute(query1)
+    con.commit()
+    rows = cur.fetchall()
+    entries = []
+    for row in rows:
+        initial = []
+        for key in row.keys():
+            initial.append(row[key])
+        entries.append(initial)
+    #print(entries)
+    query2 = f"show columns from {table};"
+    cur.execute(query2)
+    con.commit()
+    results = cur.fetchall()
+    columns = [result['Field'] for result in results]
+    print(tabulate(entries, headers=columns, tablefmt = 'psql'))
+    #print(columns)
+    input("\n\nPress ENTER to continue")
+    return
 
 # Report related functions
 def choice_reports():
