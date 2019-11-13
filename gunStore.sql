@@ -243,17 +243,25 @@ create table MAGAZINE (
 	constraint Magazine1 foreign key (Manufacturer, ModelType) references ATTACHMENT (Manufacturer, ModelType)
 ) engine=InnoDB default charset=latin1;
 
-create table FITS (
+create table FITS_ATTACHMENT (
 	Gun_Manufacturer char(40) not null,
 	Gun_ModelType char(40) not null,
-	Attachment_Manufacturer char(40),
-	Attachment_ModelType char(40),
-	CartridgeName char(40),
-	constraint FitsKey primary key (Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType, CartridgeName),
-	constraint Fits1 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint Fits2 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint Fits3 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
+	Attachment_Manufacturer char(40) not null,
+	Attachment_ModelType char(40) not null,
+	constraint FitsKey1 primary key (Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType),
+	constraint Fits11 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint Fits12 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
+
+create table FITS_AMMO (
+	Gun_Manufacturer char(40) not null,
+	Gun_ModelType char(40) not null,
+	CartridgeName char(40) not null,
+	constraint FitsKey2 primary key (Gun_Manufacturer, Gun_ModelType, CartridgeName),
+	constraint Fits21 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
+	constraint Fits22 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
+
 
 create table SOLD_AT (
 	StoreNo int not null,

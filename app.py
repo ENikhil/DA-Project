@@ -910,7 +910,9 @@ def choice_gunmodel():
         print("1. Add a new gun model")
         print("2. Update existing gun model information")
         print("3. Delete a gun model")
-        print("4. Go back")
+        print("4. Add an ammo type/attachment that fits a gun model")
+        print("5. Delete an ammo type/attachment that fits a gun model")
+        print("6. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             gunmodel_add()
@@ -919,10 +921,82 @@ def choice_gunmodel():
         elif ch == 3:
             gunmodel_delete()
         elif ch == 4:
+            gunmodel_fits_add()
+        elif ch == 5:
+            gunmodel_fits_delete()
+        elif ch == 6:
             break
         else:
             print("Invalid choice. Please try again")
             input("Press ENTER to continue>")
+    return
+
+def gunmodel_fits_add():
+    try:
+        clear()
+        gm = input("Gun manufacturer: ")
+        gmt = input("Gun model type: ")
+        gunmodel_exist(gm, gmt)
+        print("What fitting would you like to add?")
+        print("1. Attachment")
+        print("2. Ammo")
+        while ( 1 ):
+            ch = int(input("Your choice> "))
+            if ch == 1 or ch == 2:
+                break
+            else:
+                print("Invalid choice. Please enter a valid number")
+        if ch == 1:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            query = f"insert into FITS_ATTACHMENT values ('{gm}', '{gmt}', '{am}', '{amt}');"
+            cur.execute(query)
+            con.commit()
+        elif ch == 2:
+            cn = input("Ammo cartridge name: ")
+            query = f"insert into FITS_AMMO values ('{gm}', '{gmt}', '{cn}');"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert gun fitting")
+        print(">>>", e)
+        input("Press ENTER to continue>")
+    return
+
+def gunmodel_fits_delete():
+    try:
+        clear()
+        gm = input("Gun manufacturer: ")
+        gmt = input("Gun model type: ")
+        gunmodel_exist(gm, gmt)
+        print("What fitting would you like to delete?")
+        print("1. Attachment")
+        print("2. Ammo")
+        while ( 1 ):
+            ch = int(input("Your choice> "))
+            if ch == 1 or ch == 2:
+                break
+            else:
+                print("Invalid choice. Please enter a valid number")
+        if ch == 1:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            attachment_exist(am, amt)
+            query = f"delete from FITS_ATTACHMENT where Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}' and Attachment_Manufacturer='{am}' and Attachment_ModelType='{amt}';"
+            cur.execute(query)
+            con.commit()
+        elif ch == 2:
+            cn = input("Ammo cartridge name: ")
+            ammo_exist(cn)
+            query = f"delete from FITS_AMMO where Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}' and CartridgeName='{cn}';"
+            cur.execute(query)
+            con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete gun fitting")
+        print(">>>", e)
+        input("Press ENTER to continue>")
     return
 
 # AMMO related functions
@@ -1263,8 +1337,8 @@ while(1):
     clear()
 #    username = input("Username: ")
 #    password = input("Password: ")
-    username = "enikhil12"
-    password = "21lihkine"
+    username = "anirudh"
+    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
