@@ -205,6 +205,10 @@ create table SOLD_GUNMODEL (
 	constraint SoldKey14 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
 
+insert into SOLD_GUNMODEL values ('0000000001', '0000000001', '1', 'Glock', '18');
+insert into SOLD_GUNMODEL values ('0000000002', '0000000002', '2', 'AWP', 'AM-10');
+insert into SOLD_GUNMODEL values ('0000000003', '0000000001', '1', 'Kalashnikov', 'KR-9');
+
 create table SOLD_AMMO (
 	SoldTo char(10) not null,
 	SoldBy char(10) not null,
@@ -216,6 +220,10 @@ create table SOLD_AMMO (
 	constraint SoldKey23 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
 	constraint SoldKey24 foreign key (Ammo) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
+
+insert into SOLD_AMMO values ('0000000001', '0000000001', '1', 'Anirudh ammo');
+insert into SOLD_AMMO values ('0000000002', '0000000004', '3', 'Nikhil ammo');
+insert into SOLD_AMMO values ('0000000001', '0000000001', '1', 'Tanmay ammo');
 
 create table SOLD_ATTACHMENT (
 	SoldTo char(10) not null,
@@ -229,6 +237,10 @@ create table SOLD_ATTACHMENT (
 	constraint SoldKey33 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
 	constraint SoldKey34 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
+
+insert into SOLD_ATTACHMENT values ('0000000003', '0000000002', '2', 'Amul', 'DC-10');
+insert into SOLD_ATTACHMENT values ('0000000002', '0000000005', '1', 'Amul', 'DC-10');
+insert into SOLD_ATTACHMENT values ('0000000002', '0000000005', '1', 'ammunation', 'DK-9');
 
 create table BARREL (
 	Manufacturer char(40) not null,
