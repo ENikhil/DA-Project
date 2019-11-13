@@ -1,6 +1,8 @@
 import subprocess as sp
 import pymysql
 import pymysql.cursors
+import mysql.connector
+from tabulate import tabulate
 
 # STORE related functions
 def store_exist(sn):
@@ -92,7 +94,8 @@ def choice_store ():
         print("8. Delete supplier factory from the store")
         print("9. Add transaction at store")
         print("10. Delete transaction from store")
-        print("11. Go back")        
+        print("11. View tables")
+        print("12. Go back")        
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -115,10 +118,27 @@ def choice_store ():
         elif ch == 10:
             sold_delete()
         elif ch == 11:
+            view_store()
+        elif ch == 12:
             break
         else:
             print("Invalid choice. Please try again")
     return
+
+def view_store():
+    while ( 1 ):
+        clear()
+        print("What would you like to view?")
+        print("1. Store")
+        print("6. Go back")
+        ch = int(input("Your choice> "))
+        if ch == 1:
+            display_table("STORE")
+        elif ch == 6:
+            break
+        else:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER to continue>")
 
 def sold_add():
     try:
@@ -1521,6 +1541,23 @@ def scope_add(mn, mdt):
         print("Failed to insert scope")
         print(">>>", e)
     return
+
+# Dislay function
+def display_table (tab):
+    query = f"select * from {tab};"
+    cur.execute(query)
+    rows = cur.fetchall()
+    query = f"show columns from {tab};"
+    cur.execute(query)
+    res = cur.fetchall()
+    cols = [col["Field"] for col in res]
+
+    print("Hfjisdlj")
+    print(tabulate(rows, headers=cols, tablefmt='psql'))
+
+    input("\nPress ENTER to continue")
+    return
+
 
 
 # Report related functions
