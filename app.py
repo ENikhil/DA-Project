@@ -1640,6 +1640,7 @@ def report3():
 def choices (us):
     while ( 1 ):
         clear()
+        welcome_message(us)
         print("Which information would you like to access today?")
         if us in [1]:
             print("1. Stores")
@@ -1749,7 +1750,6 @@ while(1):
                     # ADMIN VIEW
                     if us == 1:
                         clear()
-                        welcome_message(us)
                         st = choices(us)
                         if st == 9:
                             break
@@ -1757,7 +1757,6 @@ while(1):
                     # INVENTORY MANAGER VIEW
                     if us == 2:
                         clear()
-                        welcome_message(us)
                         st = choices(us)
                         if st == 9:
                             break
@@ -1765,7 +1764,6 @@ while(1):
                     # HR MANAGER VIEW
                     if us == 3:
                         clear()
-                        welcome_message(us)
                         st = choices(us)
                         if st == 9:
                             break
