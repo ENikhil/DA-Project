@@ -1,6 +1,7 @@
 import subprocess as sp
 import pymysql
 import pymysql.cursors
+from tabulate import tabulate
 
 # STORE related functions
 def store_exist(sn):
@@ -92,7 +93,8 @@ def choice_store ():
         print("8. Delete supplier factory from the store")
         print("9. Add transaction at store")
         print("10. Delete transaction from store")
-        print("11. Go back")        
+        print("11. Display entries")
+        print("12. Go back")        
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -115,6 +117,40 @@ def choice_store ():
         elif ch == 10:
             sold_delete()
         elif ch == 11:
+            print("Which table's entries would you like to view?")
+            print("1. Stores")
+            print("2. Contact numbers of a store")
+            print("3. Items sold at a store")
+            print("4. Supplier factories of a store")
+            print("5. Transactions at stores")
+            print("6. Go back")
+            ch1 = int(input("Your choice> "))
+            if ch1 == 1:
+                print("The following is the list of all stores: ")
+                display("STORES")
+            elif ch1 == 2:
+                inp = input("Enter Store number: ")
+                store_exist(inp)
+                display(f"STORE_CONTACTNOS where StoreNo='{inp}'")
+            elif ch1 == 3:
+                inp = input("Enter Store number: ")
+                store_exist(inp)
+                att = input("Enter item type (GUNMODEL/AMMO/ATTACHMENT): ")
+                display(f"SOLD_AT_{att} where StoreNo='{inp}'")
+            elif ch1 == 4:
+                inp = input("Enter Store number: ")
+                store_exist(inp)
+                display(f"FACTORY where StoreNo='{inp}'")
+            elif ch1 == 5:
+                inp = input("Enter Store number: ")
+                store_exist(inp)
+                att = input("Enter item type (GUNMODEL/AMMO/ATTACHMENT): ")
+                display(f"SOLD_{att} where StoreNo='{inp}'")
+            elif ch1 == 6:
+                break
+            else:
+                print("Invalid choice.")
+        elif ch == 12:
             break
         else:
             print("Invalid choice. Please try again")
@@ -506,7 +542,9 @@ def choice_employee ():
         print("2. Update existing employee information")
         print("3. Delete an employee")
         print("4. Manage contact numbers")
-        print("5. Go back")
+        print("5. Manage dependants")
+        print("6. Display entries")
+        print("7. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             employee_add()
@@ -516,7 +554,31 @@ def choice_employee ():
             employee_delete()
         elif ch == 4:
             employee_contactnos()
-        elif ch == 5:
+        elif ch == 5:    
+            dependant()
+        elif ch == 6:
+            print("Which table's entries would you like to view?")
+            print("1. Employees")
+            print("2. Contact numbers of an employee")
+            print("3. Dependants of an employee")
+            print("3. Go back")
+            ch1 = int(input("Your choice> "))
+            if ch1 == 1:
+                print("The following is the list of all employees in the database: ")
+                display(f"EMPLOYEE")
+            elif ch1 == 2:
+                inp = input("Enter Employee ID: ")
+                employee_exist(inp)
+                display(f"EMPLOYEE_CONTACTNOS where EmployeeID='{inp}'")
+            elif ch1 == 3:
+                inp = input("Enter Employee ID: ")
+                employee_exist(inp)
+                display(f"DEPENDANT where DependsOn='{inp}'")
+            elif ch1 == 3:
+                break
+            else:
+                print("Invalid choice.")
+        elif ch == 7:
             break
         else:
             print("Invalid choice. Please try again")
@@ -756,7 +818,8 @@ def choice_manufacturer():
         print("2. Update existing manufacturer information")
         print("3. Delete a manufacturer")
         print("4. Manage factories")
-        print("5. Cancel")
+        print("5. Display entries")
+        print("6. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             manufacturer_add()
@@ -767,6 +830,23 @@ def choice_manufacturer():
         elif ch == 4:
             choice_factory()
         elif ch == 5:
+            print("Which table's entries would you like to view?")
+            print("1. Manufacturers")
+            print("2. Factories of a manufacturer")
+            print("3. Go back")
+            ch1 = int(input("Your choice> "))
+            if ch1 == 1:
+                print("List of all manufacturers: ")
+                display(f"MANUFACTURER")
+            elif ch1 == 2:
+                inp = input("Enter manufacturer name: ")
+                manufacturer_exist(inp)
+                display(f"FACTORY where ManufacturerName='{inp}'")
+            elif ch1 == 3:
+                break
+            else:
+                print("Invalid choice.")
+        elif ch == 6:
             break
         else:
             print("Invalid choice. Please try again")
@@ -887,13 +967,13 @@ def factory_contactnos_delete():
         lid = input("Location: ")
         factory_exist(sn, lid)
         cn = input("Contact number: ")
-        cur.execute(f"select * from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';")
+        cur.execute(f"select * from FACTORY_CONTACTNOS where FactoryManufacturerName='{sn}' and FactoryLocationID='{lid}' and ContactNo='{cn}';")
         con.commit()
         rows = cur.fetchall()
         if (len(rows) == 0):
             raise Exception("This entry does not exist.")
         else:
-            query = f"delete from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';"
+            query = f"delete from FACTORY_CONTACTNOS where FactoryManufacturerName='{sn}' and FactoryLocationID='{lid}' and ContactNo='{cn}';"
             cur.execute(query)
             con.commit()
     except Exception as e:
@@ -991,13 +1071,17 @@ def choice_customer():
         print("What would you like to do?")
         print("1. Add new customer")
         print("2. Update existing customer information")
-        print("3. Go back")
+        print("3. View all customer entries")
+        print("4. Go back")
         ops = int(input("Your choice> "))
         if ops == 1:
             customer_add()
         elif ops == 2:
             customer_update()
         elif ops == 3:
+            print("The following are all customer entries: ")
+            display(f"CUSTOMER")
+        elif ops == 4:
             break
         else:
             print("Invalid option. Please try again.")
@@ -1127,7 +1211,8 @@ def choice_gunmodel():
         print("3. Delete a gun model")
         print("4. Add an ammo type/attachment that fits a gun model")
         print("5. Delete an ammo type/attachment that fits a gun model")
-        print("6. Go back")
+        print("6. View all gun models")
+        print("7. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             gunmodel_add()
@@ -1140,6 +1225,20 @@ def choice_gunmodel():
         elif ch == 5:
             gunmodel_fits_delete()
         elif ch == 6:
+            print("The following are all gun models:")
+            cur.execute("select * from GUN_MODEL;")
+            con.commit()
+            rows = cur.fetchall()
+            print("lol")
+            #cur.execute("show columns from GUN_MODEL;")
+            #con.commit()
+            #columns = cur.fetchall()
+            #print("lmao")
+            #h = []
+            #h.append(rows[0])
+            #print(h)
+            print(tabulate(rows, headers = [], tablefmt='psql'))
+        elif ch == 7:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1342,7 +1441,8 @@ def choice_ammo():
         print("1. Add a new cartridge")
         print("2. Update existing ammo information")
         print("3. Delete a cartridge")
-        print("4. Go back")
+        print("4. View all types of ammo")
+        print("5. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             ammo_add()
@@ -1351,6 +1451,9 @@ def choice_ammo():
         elif ch == 3:
             ammo_delete()
         elif ch == 4:
+            print("The following are all types of ammo: ")
+            display(f"AMMO")
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1376,12 +1479,16 @@ def choice_attachment():
         clear()
         print("What would you like to do?\n" +
                 "1. Add a new attachment\n" +
-                "2. Go back")
+                "2. View all attachments\n" +
+                "3. Go back")
         ch = int(input("Your choice> "))
         if ch == 2:
             break
         elif ch == 1:
             attachment_add()
+        elif ch == 2:
+            print("The following are all attachments available: ")
+            display(f"ATTACHMENTS")
         else:
             print("Invalid choice. Please try again.")
             input("Press ENTER to continue>")
@@ -1522,7 +1629,26 @@ def scope_add(mn, mdt):
         print(">>>", e)
     return
 
-
+def display(table):
+    clear()
+    query1 = f"select * from '{table}';"
+    cur.execute(query1)
+    con.commit()
+    rows = cur.fetchall()
+    print("lol")
+    query2 = f"show columns from '{table}';"
+    cur.execute(query2)
+    con.commit()
+    columns = cur.fetchall()
+    print("lmao")
+    h = []
+    for column in columns:
+        h.append(column)
+    print(h)
+    print(tabulate(rows, headers = h, tablefmt='psql'))
+    input("\n\nPress ENTER to continue")
+    return
+    
 # Report related functions
 def choice_reports():
     while ( 1 ):
