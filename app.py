@@ -921,13 +921,13 @@ def factory_delete():
         sn = input("Manufacturer Name: ")
         manufacturer_exist(sn)
         cn = input("Location: ")
-        cur.execute(f"select * from FACTORY where FactoryName='{sn}' and LocationID='{cn}';")
+        cur.execute(f"select * from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';")
         con.commit()
         rows = cur.fetchall()
         if (len(rows) == 0):
             raise Exception("This entry does not exist.")
         else:
-            query = f"delete from FACTORY where FactoryName='{sn}' and LocationID='{cn}';"
+            query = f"delete from FACTORY where ManufacturerName='{sn}' and LocationID='{cn}';"
             cur.execute(query)
             con.commit()
     except Exception as e:
@@ -979,13 +979,13 @@ def factory_contactnos_delete():
         lid = input("Location: ")
         factory_exist(sn, lid)
         cn = input("Contact number: ")
-        cur.execute(f"select * from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';")
+        cur.execute(f"select * from FACTORY_CONTACTNOS where FactoryManufacturerName='{sn}' and FactoryLocationID='{lid}' and ContactNo='{cn}';")
         con.commit()
         rows = cur.fetchall()
         if (len(rows) == 0):
             raise Exception("This entry does not exist.")
         else:
-            query = f"delete from FACTORY_CONTACTNOS where ManufacturerName='{sn}' and LocationID='{lid}' and ContactNo='{cn}';"
+            query = f"delete from FACTORY_CONTACTNOS where FactoryManufacturerName='{sn}' and FactoryLocationID='{lid}' and ContactNo='{cn}';"
             cur.execute(query)
             con.commit()
     except Exception as e:
