@@ -1,7 +1,6 @@
 import subprocess as sp
 import pymysql
 import pymysql.cursors
-import mysql.connector
 from tabulate import tabulate
 
 # STORE related functions
@@ -129,11 +128,64 @@ def view_store():
     while ( 1 ):
         clear()
         print("What would you like to view?")
-        print("1. Store")
+        print("1. Stores")
+        print("2. All Store Contact Numbers")
+        print("3. Items sold at all stores")
+        print("4. Factories and the stores they supply")
+        print("5. Transactions at all stores")
         print("6. Go back")
-        ch = int(input("Your choice> "))
+        ch = input("Your choice> ")
+        if len(ch) == 0:
+            print("Invalid input. Please enter a valid option.")
+            input("Press ENTER to continue>")
+            continue
+        ch = int(ch)
         if ch == 1:
             display_table("STORE")
+        elif ch == 2:
+            display_table("STORE_CONTACTNOS")
+        elif ch == 3:
+            while ( 1 ):
+                print("Which item would you like to view?")
+                print("1. Guns")
+                print("2. Attachments")
+                print("3. Ammo")
+                print("4. Go back")
+                inp = int(input("Your choice> "))
+                if inp == 1:
+                    display_table("SOLD_AT_GUNMODEL")
+                elif inp == 2:
+                    display_table("SOLD_AT_ATTACHMENT")
+                elif inp == 3:
+                    display_table("SOLD_AT_AMMO")
+                elif inp == 4:
+                    break
+                else:
+                    print("Invalid option. Please try again")
+                    continue
+                break
+        elif ch == 4:
+            display_table("SUPPLIED_BY")
+        elif ch == 5:
+            while ( 1 ):
+                print("What transactions would you like to view?")
+                print("1. Guns")
+                print("2. Attachments")
+                print("3. Ammo")
+                print("4. Go back")
+                inp = int(input("Your choice> "))
+                if inp == 1:
+                    display_table("SOLD_GUNMODEL")
+                elif inp == 2:
+                    display_table("SOLD_ATTACHMENT")
+                elif inp == 3:
+                    display_table("SOLD_AMMO")
+                elif inp == 4:
+                    break
+                else:
+                    print("Invalid option. Please try again")
+                    continue
+                break
         elif ch == 6:
             break
         else:
@@ -1551,10 +1603,12 @@ def display_table (tab):
     cur.execute(query)
     res = cur.fetchall()
     cols = [col["Field"] for col in res]
-
-    print("Hfjisdlj")
-    print(tabulate(rows, headers=cols, tablefmt='psql'))
-
+#    rows = [ [i['StoreNo'], i['LocationID']] for i in rows]
+    dic = {}
+    for i in cols:
+        dic[i] = i
+    print()
+    print(tabulate(rows, headers=dic, tablefmt='psql'))
     input("\nPress ENTER to continue")
     return
 
@@ -1815,8 +1869,9 @@ while(1):
                         input("Press ENTER to continue>")
                         break
         
-    except:
+    except Exception as e:
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
+        print(">>>", e)
         input("Press ENTER to continue>")
         exit(0)
     
