@@ -381,6 +381,8 @@ def choice_employee ():
         elif ch == 3:
             employee_delete()
         elif ch == 4:
+            employee_contactnos()
+        elif ch == 5:
             break
         else:
             print("Invalid choice. Please try again")
@@ -1511,6 +1513,10 @@ while(1):
                         ch = choices(us)
                         if ch == 10:
                             break
+                    else:
+                        print("Invalid username and password combination")
+                        input("Press ENTER to continue>")
+                        break
         
     except:
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
