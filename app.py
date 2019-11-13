@@ -87,7 +87,9 @@ def choice_store ():
         print("2. Update existing store information")
         print("3. Delete a store")
         print("4. Manage contact numbers")
-        print("5. Cancel")
+        print("5. Add items sold at store")
+        print("6. Delete items sold at store")
+        print("7. Cancel")
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -98,9 +100,84 @@ def choice_store ():
         elif ch == 4:
             store_contactnos()
         elif ch == 5:
+            sold_at_add()
+        elif ch == 6:
+            sold_at_delete()
+        elif ch == 7:
             break
         else:
             print("Invalid choice. Please try again")
+    return
+
+def sold_at_add():
+    try:
+        clear()
+        sn = int(input("Enter store number: "))
+        store_exist(sn)
+        while ( 1 ):
+            print("What would you like to add to the store?")
+            print("1. Gun Model")
+            print("2. Attachment")
+            print("3. Ammo")
+            ch = int(input("Your choice> "))
+            if 1 <= ch <= 3:
+                break
+            else:
+                print("Invalid input. Please enter a valid choice.")
+        if ch == 1:
+            gm = input("Gun manufacturer: ")
+            gmt = input("Gun model type: ")
+            query = f"insert into SOLD_AT_GUNMODEL values ('{sn}', '{gm}', '{gmt}');"
+        if ch == 2:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            query = f"insert into SOLD_AT_ATTACHMENT values ('{sn}', '{am}', '{amt}');"
+        if ch == 3:
+            cn = input("Cartridge name: ")
+            query = f"insert into SOLD_AT_AMMO values ('{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert item at store")
+        print(">>>", e)
+    return
+
+def sold_at_delete():
+    try:
+        clear()
+        sn = int(input("Enter store number: "))
+        store_exist(sn)
+        while ( 1 ):
+            print("What would you like to delete from the store?")
+            print("1. Gun Model")
+            print("2. Attachment")
+            print("3. Ammo")
+            ch = int(input("Your choice> "))
+            if 1 <= ch <= 3:
+                break
+            else:
+                print("Invalid input. Please enter a valid choice.")
+        if ch == 1:
+            gm = input("Gun manufacturer: ")
+            gmt = input("Gun model type: ")
+            gunmodel_exist(gm, gmt)
+            query = f"delete from SOLD_AT_GUNMODEL where StoreNo='{sn}' and Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}';"
+        if ch == 2:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            attachment_exist(am, amt)
+            query = f"delete from SOLD_AT_ATTACHMENT where StoreNo='{sn}' and Attachment_Manufacturer='{am}' and Attachment_ModelType='{amt}';"
+        if ch == 3:
+            cn = input("Cartridge name: ")
+            ammo_exist(cn)
+            query = f"delete from SOLD_AT_AMMO where StoreNo='{sn}' and CartridgeName='{cn}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete item at store")
+        print(">>>", e)
     return
 
 def store_contactnos ():
@@ -931,6 +1008,7 @@ def choice_gunmodel():
             input("Press ENTER to continue>")
     return
 
+# FITS related functions
 def gunmodel_fits_add():
     try:
         clear()

@@ -263,16 +263,30 @@ create table FITS_AMMO (
 ) engine=InnoDB default charset=latin1;
 
 
-create table SOLD_AT (
+create table SOLD_AT_GUNMODEL (
 	StoreNo int not null,
-	Gun_Manufacturer char(40),
-	Gun_ModelType char(40),
-	Attachment_Manufacturer char(40),
-	Attachment_ModelType char(40),
-	CartridgeName char(40),
-	constraint SoldAtKey primary key (StoreNo, Gun_Manufacturer, Gun_ModelType, Attachment_Manufacturer, Attachment_ModelType, CartridgeName),
-	constraint SoldAt1 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
-	constraint SoldAt2 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint SoldAt3 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade,
-	constraint SoldAt4 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
+	Gun_Manufacturer char(40) not null,
+	Gun_ModelType char(40) not null,
+	constraint SoldAtGMKey1 primary key (StoreNo, Gun_Manufacturer, Gun_ModelType),
+	constraint SoldAt11 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldAt12 foreign key (Gun_Manufacturer, Gun_ModelType) references GUN_MODEL (Manufacturer, ModelType) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
+
+
+create table SOLD_AT_ATTACHMENT (
+	StoreNo int not null,
+	Attachment_Manufacturer char(40) not null,
+	Attachment_ModelType char(40) not null,
+	constraint SoldAtGMKey2 primary key (StoreNo, Attachment_Manufacturer, Attachment_ModelType),
+	constraint SoldAt21 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldAt22 foreign key (Attachment_Manufacturer, Attachment_ModelType) references ATTACHMENT (Manufacturer, ModelType) on delete cascade on update cascade
+) engine=InnoDB default charset=latin1;
+
+
+create table SOLD_AT_AMMO (
+	StoreNo int not null,
+	CartridgeName char(40) not null,
+	constraint SoldAtGMKey3 primary key (StoreNo, CartridgeName),
+	constraint SoldAt31 foreign key (StoreNo) references STORE (StoreNo) on delete cascade on update cascade,
+	constraint SoldAt32 foreign key (CartridgeName) references AMMO (CartridgeName) on delete cascade on update cascade
 ) engine=InnoDB default charset=latin1;
