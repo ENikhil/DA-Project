@@ -1441,14 +1441,18 @@ def choice_reports():
         print("1. Attachments and Ammo that fit Gun Model")
         print("2. Customers verified by Employee")
         print("3. Items sold at store")
-        print("6. Go back")
+        print("4. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             report1()
-        if ch == 2:
+        elif ch == 2:
             report2()
-        else:
+        elif ch == 3:
+            report3()
+        elif ch == 4:
             break
+        else:
+            print("Invalid option. Please enter a valid option.")
     return 
 
 def report1():
@@ -1468,7 +1472,7 @@ def report1():
     rows_ammo = cur.fetchall()
 
     print(f"The Attachments that fit {gm} {gmt} are:")
-    print("|{:34}|{:34}|".format("\033[1mAttachment Manufacturer", "Attachment Model\033[0m"))
+    print("|{:30}|{:30}|".format("Attachment Manufacturer", "Attachment Model"))
     for i in range(61):
         print("-", end='')
     print("")
@@ -1476,7 +1480,7 @@ def report1():
         print("|{:30}|{:30}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
 
     print(f"\n\nThe Ammo products that fit {gm} {gmt} are:")
-    print("|{:34}|".format("\033[1mCartridge Name\033[0m"))
+    print("|{:30}|".format("Cartridge Name"))
     for i in range(61):
         print("-", end='')
     print("")
@@ -1505,6 +1509,45 @@ def report2():
     input("\n\nPress ENTER to continue")
     return
 
+def report3():
+    '''Report of items sold at a particular store'''
+    clear()
+    sn = input("Store number: ")
+    store_exist(sn)
+    query = f"select * from SOLD_AT_GUNMODEL where StoreNo='{sn}';"
+    cur.execute(query)
+    rows_gm = cur.fetchall()
+    query = f"select * from SOLD_AT_ATTACHMENT where StoreNo='{sn}';"
+    cur.execute(query)
+    rows_at = cur.fetchall()
+    query = f"select * from SOLD_AT_AMMO where StoreNo='{sn}';"
+    cur.execute(query)
+    rows_am = cur.fetchall()
+
+    print(f"These are the Guns sold at Store Number {sn}:\n")
+    print("|{:25}|{:25}|".format("Gun Manufacturer", "Gun Model Type"))
+    for i in range(53):
+        print("-", end='')
+    print("")
+    for row in rows_gm:
+        print("|{:25}|{:25}|".format(row["Gun_Manufacturer"], row["Gun_ModelType"]))
+
+    print(f"\n\nThese are the Attachments sold at Store Number {sn}:\n")
+    print("|{:25}|{:25}|".format("Attachment Manufacturer", "Attachment Type"))
+    for i in range(53):
+        print("-", end='')
+    print("")
+    for row in rows_at:
+        print("|{:25}|{:25}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+
+    print(f"\n\nThese are the Ammo types sold at Store Number {sn}:\n")
+    print("|{:25}|".format("Cartridge Name"))
+    for i in range(27):
+        print("-", end='')
+    print("")
+    for row in rows_am:
+        print("|{:25}|".format(row["CartridgeName"]))
+    input("\n\nPress ENTER to continue>")
 
 
 ##################################################################################
@@ -1529,7 +1572,7 @@ def choices (us):
         if us in [1, 2]:
             print("7. Gun Models")
         print("8. Reports")
-        print("10. Logout")
+        print("9. Logout")
         ch = int(input("Your choice> "))
 
         if ch == 1 and (us in [1]):
@@ -1548,7 +1591,7 @@ def choices (us):
             choice_gunmodel()
         elif ch == 8:
             choice_reports()
-        elif ch == 10:
+        elif ch == 9:
             print("Goodbye!")
             input("Enter any key to CONTINUE>")
             return ch
@@ -1584,10 +1627,10 @@ def clear():
 # Main code 
 while(1):
     clear()
-#    username = input("SQL Username: ")
-#    password = input("SQL Password: ")
-    username = "anirudh"
-    password = "746058"
+    username = input("SQL Username: ")
+    password = input("SQL Password: ")
+#    username = "anirudh"
+#    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -1624,7 +1667,7 @@ while(1):
                         clear()
                         welcome_message(us)
                         st = choices(us)
-                        if st == 10:
+                        if st == 9:
                             break
 
                     # INVENTORY MANAGER VIEW
@@ -1632,7 +1675,7 @@ while(1):
                         clear()
                         welcome_message(us)
                         st = choices(us)
-                        if st == 10:
+                        if st == 9:
                             break
 
                     # HR MANAGER VIEW
@@ -1640,7 +1683,7 @@ while(1):
                         clear()
                         welcome_message(us)
                         st = choices(us)
-                        if st == 10:
+                        if st == 9:
                             break
                     else:
                         print("Invalid username and password combination")
