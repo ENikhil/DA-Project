@@ -1387,39 +1387,83 @@ def scope_add(mn, mdt):
         print(">>>", e)
     return
 
+##################################################################################
 
 # Overall functions
-def choices (ch):
-    if ch == 1:
+def choices (us):
+    print("Which information would you like to access today?")
+    if us in [1]:
+        print("1. Stores")
+    if us in [1, 3]:
+        print("2. Employees")
+    if us in [1, 3]:
+        print("3. Customers")
+    if us in [1, 2]:
+        print("4. Manufacturers")
+    if us in [1, 2]:
+        print("5. Attachments")
+    if us in [1, 2]:
+        print("6. Ammo")
+    if us in [1, 2]:
+        print("7. Gun Models")
+    print("8. Reports")
+    print("10. Logout")
+    ch = int(input("Your choice> "))
+
+    if ch == 1 and (us in [1]):
         choice_store()
-    elif ch == 2:
+    elif ch == 2 and (us in [1, 3]):
         choice_employee()
-    elif ch == 3:
+    elif ch == 3 and (us in [1, 3]):
         choice_customer()
-    elif ch == 4:
+    elif ch == 4 and (us in [1, 2]):
         choice_manufacturer()
-    elif ch == 5:
+    elif ch == 5 and (us in [1, 2]):
         choice_attachment()
-    elif ch == 6:
+    elif ch == 6 and (us in [1, 2]):
         choice_ammo()
-    elif ch == 7:
+    elif ch == 7 and (us in [1, 2]):
         choice_gunmodel()
+    elif ch == 10:
+        print("Goodbye!")
+        input("Enter any key to CONTINUE>")
+        return ch
     else:
         print("Invalid input. Please try again.")
-    return
+        input("Enter any key to CONTINUE>")
+    return ch
+
+def welcome_message (us):
+    if us == 1:
+        print("\n\t\t\tHello Admin.")
+    elif us == 2:
+        print("\n\t\t\tHello Inventory Manager.")
+    elif us == 3:
+        print("\n\t\t\tHello HR Manager.")
+    print("\n\t\tWELCOME TO THE GUN STORE DATABASE!\n\n")
+    print(' \n\
+ ,________________________________       \n\
+|__________,----------._ [____]  ""-,__  __...-----==="\n\
+        (_(||||||||||||)___________/   ""             |\n\
+           `-----------\'        [ ))"-,               |\n\
+                                ""    `,  _,--...___  |\n\
+                                        `/          """"\n\
+                                        \n\n')
+    return us
 
 def clear():
     sp.call('clear', shell=True)
     return
 
+##################################################################################
 
-# Global
+# Main code 
 while(1):
     clear()
-#    username = input("Username: ")
-#    password = input("Password: ")
-    username = "anirudh"
-    password = "746058"
+    username = input("SQL Username: ")
+    password = input("SQL Password: ")
+#    username = "anirudh"
+#    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
@@ -1439,33 +1483,38 @@ while(1):
             cur = con.cursor()
             while ( 1 ):
                 clear()
-                print("\n\n\t\tWELCOME TO THE GUN STORE DATABASE!\n\n")
-                print(' \n\
- ,________________________________       \n\
-|__________,----------._ [____]  ""-,__  __...-----==="\n\
-        (_(||||||||||||)___________/   ""             |\n\
-           `-----------\'        [ ))"-,               |\n\
-                                ""    `,  _,--...___  |\n\
-                                        `/          """"\n\
-                                        \n\n')
-                print("Which information would you like to access today?")
-                print("1. Stores")
-                print("2. Employees")
-                print("3. Customers")
-                print("4. Manufacturers")
-                print("5. Attachments")
-                print("6. Ammo")
-                print("7. Gun Models")
-                print("10. Logout")
-                ch = int(input("Enter choice> "))
-                clear()
+                print("Please enter your Gun Store Login details.")
+                user = input("Username: ")
+                pasw = input("Password: ")
 
-                if ch == 10:
-                    break
-                else:
-                    choices(ch)
-                    input("Enter any key to CONTINUE>")
+                while ( 1 ):
+                    # ADMIN VIEW
+                    if user == 'admin' and pasw == 'admin':
+                        clear()
+                        us = 1
+                        welcome_message(us)
+                        ch = choices(us)
+                        if ch == 10:
+                            break
 
+                    # INVENTORY MANAGER VIEW
+                    if user == 'inv_manager' and pasw == 'invvv':
+                        clear()
+                        us = 2
+                        welcome_message(us)
+                        ch = choices(us)
+                        if ch == 10:
+                            break
+
+                    # HR MANAGER VIEW
+                    if user == 'hr_manager' and pasw == 'hrrr':
+                        clear()
+                        us = 3
+                        welcome_message(us)
+                        ch = choices(us)
+                        if ch == 10:
+                            break
+        
     except:
         print("Connection Refused: Either username or password is incorrect or user doesn't have access to database")
         input("Press ENTER to continue>")
