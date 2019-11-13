@@ -12,7 +12,6 @@ def store_exist(sn):
         raise Exception(f"Store number {sn} does not exist in database. Please enter a valid store number")
     return
 
-
 def store_add():
     try:
         store = {}
@@ -91,7 +90,9 @@ def choice_store ():
         print("6. Delete items sold at store")
         print("7. Add supplier factory to the store")
         print("8. Delete supplier factory from the store")
-        print("9. Go Back")        
+        print("9. Add transaction at store")
+        print("10. Delete transaction from store")
+        print("11. Go back")        
         ch = int(input("Your choice> "))
         if ch == 1:
             store_add()
@@ -110,9 +111,92 @@ def choice_store ():
         elif ch == 8:
             supplied_by_delete()
         elif ch == 9:
+            sold_add()
+        elif ch == 10:
+            sold_delete()
+        elif ch == 11:
             break
         else:
             print("Invalid choice. Please try again")
+    return
+
+def sold_add():
+    try:
+        clear()
+        cid = int(input("Enter Customer ID: "))
+        customer_exist(cid)
+        eid = int(input("Enter Employee ID: "))
+        employee_exist(eid)
+        sn = int(input("Enter store number: "))
+        store_exist(sn)
+        while ( 1 ):
+            print("Whose sale would you like to add to the store?")
+            print("1. Gun Model")
+            print("2. Attachment")
+            print("3. Ammo")
+            ch = int(input("Your choice> "))
+            if 1 <= ch <= 3:
+                break
+            else:
+                print("Invalid input. Please enter a valid choice.")
+        if ch == 1:
+            gm = input("Gun manufacturer: ")
+            gmt = input("Gun model type: ")
+            query = f"insert into SOLD_GUNMODEL values ('{cid}', '{eid}', '{sn}', '{gm}', '{gmt}');"
+        if ch == 2:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            query = f"insert into SOLD_ATTACHMENT values ('{cid}', '{eid}', '{sn}', '{am}', '{amt}');"
+        if ch == 3:
+            cn = input("Cartridge name: ")
+            query = f"insert into SOLD_AMMO values ('{cid}', '{eid}', '{sn}', '{cn}');"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to insert item at store")
+        print(">>>", e)
+    return
+
+def sold_delete():
+    try:
+        clear()
+        cid = int(input("Enter Customer ID: "))
+        customer_exist(cid)
+        eid = int(input("Enter Employee ID: "))
+        employee_exist(eid)
+        sn = int(input("Enter store number: "))
+        store_exist(sn)
+        while ( 1 ):
+            print("Whose sale would you like to delete from the store?")
+            print("1. Gun Model")
+            print("2. Attachment")
+            print("3. Ammo")
+            ch = int(input("Your choice> "))
+            if 1 <= ch <= 3:
+                break
+            else:
+                print("Invalid input. Please enter a valid choice.")
+        if ch == 1:
+            gm = input("Gun manufacturer: ")
+            gmt = input("Gun model type: ")
+            gunmodel_exist(gm, gmt)
+            query = f"delete from SOLD_GUNMODEL where SoldTo='{cid}' and SoldBy='{eid}' and StoreNo='{sn}' and Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}';"
+        if ch == 2:
+            am = input("Attachment manufacturer: ")
+            amt = input("Attachment model type: ")
+            attachment_exist(am, amt)
+            query = f"delete from SOLD_ATTACHMENT where SoldTo='{cid}' and SoldBy='{eid}' and StoreNo='{sn}' and Attachment_Manufacturer='{am}' and Attachment_ModelType='{amt}';"
+        if ch == 3:
+            cn = input("Cartridge name: ")
+            ammo_exist(cn)
+            query = f"delete from SOLD_AMMO where SoldTo='{cid}' and SoldBy='{eid}' and StoreNo='{sn}' and CartridgeName='{cn}';"
+        cur.execute(query)
+        con.commit()
+    except Exception as e:
+        con.rollback()
+        print("Failed to delete item at store")
+        print(">>>", e)
     return
 
 def supplied_by_add():
@@ -154,7 +238,7 @@ def supplied_by_delete():
         print("Failed to delete supply source")
         print(">>>", e)
     return
-            
+
 def sold_at_add():
     try:
         clear()
@@ -1584,10 +1668,10 @@ def clear():
 # Main code 
 while(1):
     clear()
-#    username = input("SQL Username: ")
-#    password = input("SQL Password: ")
-    username = "anirudh"
-    password = "746058"
+    username = input("SQL Username: ")
+    password = input("SQL Password: ")
+#    username = "anirudh"
+#    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
