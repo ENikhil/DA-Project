@@ -100,7 +100,7 @@ def choice_store ():
             store_add()
         elif ch == 2:
             store_update()
-        elif ch == 3:
+        elif ch == 2:
             store_delete()
         elif ch == 4:
             store_contactnos()
@@ -1703,101 +1703,137 @@ def choice_reports():
             break
         else:
             print("Invalid option. Please enter a valid option.")
+            input("Press ENTER to continue")
     return 
 
 def report1():
     '''Report of attachments and ammo that fit gun model.'''
-    clear()
-    gm = input("Gun Manufacturer: ")
-    gmt = input("Gun Model Type: ")
-    gunmodel_exist(gm, gmt)
-    query = f"select Attachment_Manufacturer, Attachment_ModelType from FITS_ATTACHMENT where Gun_Manufacturer='{gm}' \
-            and Gun_ModelType='{gmt}';"
-    cur.execute(query)
-    con.commit()
-    rows_att = cur.fetchall()
-    query = f"select CartridgeName from FITS_AMMO where Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}';"
-    cur.execute(query)
-    con.commit()
-    rows_ammo = cur.fetchall()
+    try:
+        clear()
+        gm = input("Gun Manufacturer: ")
+        gmt = input("Gun Model Type: ")
+        gunmodel_exist(gm, gmt)
+        query = f"select Attachment_Manufacturer, Attachment_ModelType from FITS_ATTACHMENT where Gun_Manufacturer='{gm}' \
+                and Gun_ModelType='{gmt}';"
+        cur.execute(query)
+        con.commit()
+        rows_att = cur.fetchall()
+        query = f"select CartridgeName from FITS_AMMO where Gun_Manufacturer='{gm}' and Gun_ModelType='{gmt}';"
+        cur.execute(query)
+        con.commit()
+        rows_ammo = cur.fetchall()
 
-    print(f"The Attachments that fit {gm} {gmt} are:")
-    print("|{:30}|{:30}|".format("Attachment Manufacturer", "Attachment Model"))
-    for i in range(61):
-        print("-", end='')
-    print("")
-    for row in rows_att:
-        print("|{:30}|{:30}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+        print(f"The Attachments that fit {gm} {gmt} are:")
+#        print("|{:30}|{:30}|".format("Attachment Manufacturer", "Attachment Model"))
+#        for i in range(61):
+#            print("-", end='')
+#        print("")
+#        for row in rows_att:
+#            print("|{:30}|{:30}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+        cols = { "Attachment_Manufacturer" : "Attachment Manufacturer", "Attachment_ModelType" : "Atttachment Model Type" }
+        print(tabulate(rows_att, headers=cols, tablefmt='psql'))
 
-    print(f"\n\nThe Ammo products that fit {gm} {gmt} are:")
-    print("|{:30}|".format("Cartridge Name"))
-    for i in range(61):
-        print("-", end='')
-    print("")
-    for row in rows_ammo:
-        print("|{:30}|".format(row["CartridgeName"]))
-    input("\n\nPress ENTER to continue")
+        print(f"\n\nThe Ammo products that fit {gm} {gmt} are:")
+#        print("|{:30}|".format("Cartridge Name"))
+#        for i in range(61):
+#            print("-", end='')
+#        print("")
+#        for row in rows_ammo:
+#            print("|{:30}|".format(row["CartridgeName"]))
+        cols = { "CartridgeName" : "Cartridge Name" }
+        print(tabulate(rows_ammo, headers=cols, tablefmt='psql'))
+
+        input("\n\nPress ENTER to continue")
+    except Exception as e:
+        print("Could not generate report")
+        print(">>>", e)
+        input("Press ENTER to continue")
 
     return
 
 def report2():
     '''Report of customers verified by a particular employee'''
-    clear()
-    eid = input("Employee ID: ")
-    employee_exist(eid)
-    query = f"select * from CUSTOMER where VerifiedBy='{eid}';"
-    cur.execute(query)
-    con.commit()
-    rows = cur.fetchall()
-    print(f"These are the customers verified by {eid}:\n\n")
-    print("|{:15}|{:25}|{:25}|{:25}|".format("Customer ID", "First Name", "Middle Name", "Last Name"))
-    for i in range(95):
-        print("-", end='')
-    print("")
-    for row in rows:
-        print("|{:15}|{:25}|{:25}|{:25}|".format(row["CustomerID"], row["Fname"], row["Mname"], row["Lname"]))
-    input("\n\nPress ENTER to continue")
+    try:
+        clear()
+        eid = input("Employee ID: ")
+        employee_exist(eid)
+        query = f"select * from CUSTOMER where VerifiedBy='{eid}';"
+        cur.execute(query)
+        con.commit()
+        rows = cur.fetchall()
+        print(f"These are the customers verified by {eid}:\n\n")
+#        print("|{:15}|{:25}|{:25}|{:25}|".format("Customer ID", "First Name", "Middle Name", "Last Name"))
+#        for i in range(95):
+#            print("-", end='')
+#        print("")
+#        for row in rows:
+#            print("|{:15}|{:25}|{:25}|{:25}|".format(row["CustomerID"], row["Fname"], row["Mname"], row["Lname"]))
+        cols = { "CustomerID" : "Customer ID", "Fname" : "First Name", "Mname" : "Middle Name", "Lname" : "Last Name" }
+        print(tabulate(rows, headers=cols, tablefmt='psql'))
+
+        input("\n\nPress ENTER to continue")
+    except Exception as e:
+        print("Could not generate report")
+        print(">>>", e)
+        input("Press ENTER to continue")
     return
 
 def report3():
     '''Report of items sold at a particular store'''
-    clear()
-    sn = input("Store number: ")
-    store_exist(sn)
-    query = f"select * from SOLD_AT_GUNMODEL where StoreNo='{sn}';"
-    cur.execute(query)
-    rows_gm = cur.fetchall()
-    query = f"select * from SOLD_AT_ATTACHMENT where StoreNo='{sn}';"
-    cur.execute(query)
-    rows_at = cur.fetchall()
-    query = f"select * from SOLD_AT_AMMO where StoreNo='{sn}';"
-    cur.execute(query)
-    rows_am = cur.fetchall()
+    try:
+        clear()
+        sn = input("Store number: ")
+        store_exist(sn)
+        query = f"select * from SOLD_AT_GUNMODEL where StoreNo='{sn}';"
+        cur.execute(query)
+        rows_gm = cur.fetchall()
+        query = f"select * from SOLD_AT_ATTACHMENT where StoreNo='{sn}';"
+        cur.execute(query)
+        rows_at = cur.fetchall()
+        query = f"select * from SOLD_AT_AMMO where StoreNo='{sn}';"
+        cur.execute(query)
+        rows_am = cur.fetchall()
 
-    print(f"These are the Guns sold at Store Number {sn}:\n")
-    print("|{:25}|{:25}|".format("Gun Manufacturer", "Gun Model Type"))
-    for i in range(53):
-        print("-", end='')
-    print("")
-    for row in rows_gm:
-        print("|{:25}|{:25}|".format(row["Gun_Manufacturer"], row["Gun_ModelType"]))
+        print(f"These are the Guns sold at Store Number {sn}:\n")
+#        print("|{:25}|{:25}|".format("Gun Manufacturer", "Gun Model Type"))
+#        for i in range(53):
+#            print("-", end='')
+#        print("")
+#        for row in rows_gm:
+#            print("|{:25}|{:25}|".format(row["Gun_Manufacturer"], row["Gun_ModelType"]))
 
-    print(f"\n\nThese are the Attachments sold at Store Number {sn}:\n")
-    print("|{:25}|{:25}|".format("Attachment Manufacturer", "Attachment Type"))
-    for i in range(53):
-        print("-", end='')
-    print("")
-    for row in rows_at:
-        print("|{:25}|{:25}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+        cols = { "Gun_Manufacturer" : "Gun Manufacturer", "Gun_ModelType" : "Gun Model Type" }
+        print(tabulate(rows_gm, headers=cols, tablefmt='psql'))
 
-    print(f"\n\nThese are the Ammo types sold at Store Number {sn}:\n")
-    print("|{:25}|".format("Cartridge Name"))
-    for i in range(27):
-        print("-", end='')
-    print("")
-    for row in rows_am:
-        print("|{:25}|".format(row["CartridgeName"]))
-    input("\n\nPress ENTER to continue>")
+        print(f"\n\nThese are the Attachments sold at Store Number {sn}:\n")
+#        print("|{:25}|{:25}|".format("Attachment Manufacturer", "Attachment Type"))
+#        for i in range(53):
+#            print("-", end='')
+#        print("")
+#        for row in rows_at:
+#            print("|{:25}|{:25}|".format(row["Attachment_Manufacturer"], row["Attachment_ModelType"]))
+
+        cols = { "Attachment_Manufacturer" : "Attachment Manufacturer", "Attachment_ModelType" : "Atttachment Model Type" }
+        print(tabulate(rows_at, headers=cols, tablefmt='psql'))
+
+        print(f"\n\nThese are the Ammo types sold at Store Number {sn}:\n")
+#        print("|{:25}|".format("Cartridge Name"))
+#        for i in range(27):
+#            print("-", end='')
+#        print("")
+#        for row in rows_am:
+#            print("|{:25}|".format(row["CartridgeName"]))
+
+        cols = { "CartridgeName" : "Cartridge Name" }
+        print(tabulate(rows_am, headers=cols, tablefmt='psql'))
+
+        input("\n\nPress ENTER to continue>")
+    except Exception as e:
+        print("Could not generate report")
+        print(">>>", e)
+        input("Press ENTER to continue")
+
+    return
 
 
 ##################################################################################
@@ -1880,8 +1916,6 @@ while(1):
     clear()
     username = input("SQL Username: ")
     password = input("SQL Password: ")
-#    username = "anirudh"
-#    password = "746058"
 
     try:
         con = pymysql.connect(host='localhost',
