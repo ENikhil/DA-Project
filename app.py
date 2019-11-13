@@ -533,11 +533,11 @@ def customer_update():
   
 # GUN_MODEL related functions
 def gunmodel_exist(gmm, gmmt):
-    query = f"select ModelType from GUN_MODEL where Manufacturer='{gm}';"
+    query = f"select ModelType from GUN_MODEL where Manufacturer='{gmm}' and ModelType='{gmmt}';"
     cur.execute(query)
     con.commit()
     rows = cur.fetchall()
-    if gmmt in rows['ModelType']:
+    if len(rows) != 0:
         return
     else:
         raise Exception(f"Gun with Manufacturer {gmm} and Model Type {gmmt} does not exist in the database. Please try again.")
@@ -590,7 +590,7 @@ def ammo_add():
         ammo = {}
         clear()
         while ( 1 ):
-            printf("The allowed cartridge names are non null strings shorter than 40 characters")
+            print("The allowed cartridge names are non null strings shorter than 40 characters")
             ammo["cartridgename"] = input("Cartridge Name: ")
             if 0 < len(ammo["cartridgename"]) < 40:
                 break
@@ -672,7 +672,7 @@ def ammo_update():
     try:
         clear()
         cartridgename = input("Name of the cartridge you want to edit: ")
-        ammmo_exist(cartridgename)
+        ammo_exist(cartridgename)
         while ( 1 ):
             clear()
             print("What attribute do you want to edit?")
@@ -775,7 +775,7 @@ def choice_gunmodel():
         print("1. Add a new gun model")
         print("2. Update existing gun model information")
         print("3. Delete a gun model")
-        print("4. Cancel")
+        print("4. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             gunmodel_add()
@@ -796,7 +796,7 @@ def choice_ammo():
         print("1. Add a new cartridge")
         print("2. Update existing ammo information")
         print("3. Delete a cartridge")
-        print("4. Cancel")
+        print("4. Go back")
         ch = int(input("Your choice> "))
         if ch == 1:
             ammo_add()
@@ -812,7 +812,6 @@ def choice_ammo():
     return
 
 
-# ATTACHMENT related functions
 # ATTACHMENT related functions
 def attachment_exist(mn, mdt):
     query = f"select ModelType from ATTACHMENT where Manufacturer='{mn}';"
@@ -990,6 +989,10 @@ def choices (ch):
         choice_manufacturer()
     elif ch == 5:
         choice_attachment()
+    elif ch == 6:
+        choice_ammo()
+    elif ch == 7:
+        choice_gunmodel()
     else:
         print("Invalid input. Please try again.")
     return
@@ -1040,11 +1043,13 @@ while(1):
                 print("3. Customers")
                 print("4. Manufacturers")
                 print("5. Attachments")
-                print("6. Logout")
+                print("6. Ammo")
+                print("7. Gun Models")
+                print("10. Logout")
                 ch = int(input("Enter choice> "))
                 clear()
 
-                if ch == 6:
+                if ch == 10:
                     break
                 else:
                     choices(ch)
