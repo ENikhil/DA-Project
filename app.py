@@ -122,6 +122,7 @@ def choice_store ():
             break
         else:
             print("Invalid choice. Please try again")
+            input("Press ENTER to continue")
     return
 
 def view_store():
